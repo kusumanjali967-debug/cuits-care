@@ -1,0 +1,167 @@
+.camera-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+.prompt-view {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.camera-prompt {
+  padding: 32px 24px;
+  align-items: center;
+  text-align: center;
+}
+.primary-bg {
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%);
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  margin-bottom: 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 8px 24px rgba(216, 140, 125, 0.4);
+}
+.text-danger {
+  color: var(--danger);
+}
+.small-text {
+  font-size: 0.875rem;
+}
+.camera-view {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #000;
+  z-index: 2000;
+  display: flex;
+  flex-direction: column;
+}
+.video-feed {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.camera-controls {
+  position: absolute;
+  bottom: 40px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.close-cam {
+  position: absolute;
+  right: 24px;
+  bottom: 24px;
+  background: rgba(0,0,0,0.5);
+  backdrop-filter: blur(8px);
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+}
+.capture-wrapper {
+  background: rgba(255,255,255,0.3);
+  padding: 6px;
+  border-radius: 50%;
+  backdrop-filter: blur(4px);
+}
+.capture-btn {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background-color: transparent;
+  border: 3px solid #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+.capture-inner {
+  width: 56px;
+  height: 56px;
+  background-color: #fff;
+  border-radius: 50%;
+  transition: transform 0.2s;
+}
+.capture-btn:active .capture-inner {
+  transform: scale(0.9);
+}
+
+.analysis-view {
+  padding-top: 24px;
+}
+.img-preview-container {
+  position: relative;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: var(--card-shadow);
+  margin-bottom: 24px;
+}
+.img-preview {
+  width: 100%;
+  height: 320px;
+  object-fit: cover;
+  display: block;
+}
+.retake-btn {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+  font-size: 0.875rem;
+  color: var(--text-primary);
+  cursor: pointer;
+  z-index: 10;
+}
+.analyzing-card {
+  padding: 40px 24px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+.spinner {
+  animation: spin 1.5s linear infinite;
+}
+
+.diagnostic-box, .recommendation-box {
+  padding: 24px;
+}
+.diag-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.suggested-product {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-top: 12px;
+  background: var(--bg-secondary);
+  padding: 16px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--glass-border);
+}
+.suggested-product p {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-primary);
+}
