@@ -1,14 +1,18 @@
 import { useNavigate } from 'react-router-dom';
 import { User, Lock, ArrowLeft } from 'lucide-react';
+import { useUser } from '../context/UserContext.jsx';
 import './Login.css';
 
 export default function Login() {
   const navigate = useNavigate();
+  const { login } = useUser();
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    // Simulate login and direct to onboarding (for skin type questions)
-    navigate('/onboarding');
+    const email = e.target.querySelector('input[type="email"]').value;
+    await login(email);
+    // Direct back to onboarding or dashboard
+    navigate('/dashboard');
   };
 
   return (

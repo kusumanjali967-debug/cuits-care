@@ -6,10 +6,8 @@ export const useUser = () => useContext(UserContext);
 
 export const UserProvider = ({ children }) => {
   const [userData, setUserData] = useState(() => {
-    const saved = localStorage.getItem('cuitsCareUser');
-    if (saved) return JSON.parse(saved);
     return {
-      name: "Jane",
+      name: "Guest",
       email: "",
       skinType: "Unknown",
       skinIssues: [],
@@ -25,26 +23,90 @@ export const UserProvider = ({ children }) => {
     };
   });
 
+  const [loading, setLoading] = useState(true);
+
+  // Initial load from backend
   useEffect(() => {
-    localStorage.setItem('cuitsCareUser', JSON.stringify(userData));
-  }, [userData]);
+    const fetchUser = async () => {
+      const savedEmail = localStorage.getItem('cuitsCareUserEmail');
+      if (savedEmail) {
+        try {
+          const res = await fetch(`/api/user/${savedEmail}`);
+          if (res.ok) {
+            const data = await res.json();
+            setUserData(data);
+          }
+        } catch (error) {
+          console.error("Failed to load user from DB:", error);
+        }
+      }
+      setLoading(false);
+    };
+    fetchUser();
+  }, []);
+
+  const login = async (email) => {
+    localStorage.setItem('cuitsCareUserEmail', email);
+    try {
+      const res = await fetch(`/api/user/${email}`);
+      if (res.ok) {
+        const data = await res.json();
+        setUserData(data);
+      } else {
+        // Create new user if not exists
+        const newUserData = { ...userData, email, name: email.split('@')[0] };
+        const postRes = await fetch('/api/user', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(newUserData)
+        });
+        if (postRes.ok) {
+          const data = await postRes.json();
+          setUserData(data);
+        }
+      }
+    } catch (error) {
+      console.error("Login failed", error);
+    }
+  };
+
+  const syncToDB = async (newData) => {
+    if (!newData.email) return;
+    try {
+      await fetch('/api/user', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newData)
+      });
+    } catch (err) {
+      console.error("Failed to sync to DB", err);
+    }
+  };
 
   const updateUserData = (newData) => {
-    setUserData(prev => ({ ...prev, ...newData }));
+    setUserData(prev => {
+      const updated = { ...prev, ...newData };
+      syncToDB(updated);
+      return updated;
+    });
   };
 
   const toggleRoutine = (id) => {
-    setUserData(prev => ({
-      ...prev,
-      morningRoutine: prev.morningRoutine.map(item => 
-        item.id === id ? { ...item, completed: !item.completed } : item
-      )
-    }));
+    setUserData(prev => {
+      const updated = {
+        ...prev,
+        morningRoutine: prev.morningRoutine.map(item => 
+          item.id === id ? { ...item, completed: !item.completed } : item
+        )
+      };
+      syncToDB(updated);
+      return updated;
+    });
   };
 
   return (
-    <UserContext.Provider value={{ userData, updateUserData, toggleRoutine }}>
-      {children}
+    <UserContext.Provider value={{ userData, updateUserData, toggleRoutine, login, loading }}>
+      {!loading && children}
     </UserContext.Provider>
   );
 };
