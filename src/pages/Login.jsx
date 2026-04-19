@@ -13,10 +13,14 @@ export default function Login() {
     const result = await login(email);
     
     // Explicitly check if it's a freshly created user or an old user
-    if (result && result.isNew) {
-      navigate('/onboarding');
+    if (result) {
+      if (result.isNew) {
+        navigate('/onboarding');
+      } else {
+        navigate('/dashboard');
+      }
     } else {
-      navigate('/dashboard');
+      alert("Login failed! The backend server might be offline.");
     }
   };
 
