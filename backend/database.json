@@ -1,0 +1,431 @@
+{
+  "users": [
+    {
+      "skinType": "Oily",
+      "skinIssues": [],
+      "currentProducts": [
+        {
+          "id": 1,
+          "name": "COSRX Low pH Cleanser"
+        },
+        {
+          "id": 2,
+          "name": "Beauty of Joseon Sunscreen"
+        },
+        {
+          "id": 1776588539899,
+          "name": "AHA/BHA Gentle Peeling Solution"
+        },
+        {
+          "id": 1776589529042,
+          "name": "cera facewash"
+        }
+      ],
+      "morningRoutine": [
+        {
+          "id": 1,
+          "name": "Gentle Cleanser",
+          "completed": false
+        },
+        {
+          "id": 2,
+          "name": "Vitamin C Serum",
+          "completed": false
+        },
+        {
+          "id": 3,
+          "name": "SPF 50 Sunscreen",
+          "completed": false
+        }
+      ],
+      "score": 0,
+      "history": [
+        {
+          "date": "2026-04-19T08:48:59.899Z",
+          "type": "Scan",
+          "result": "Dullness"
+        }
+      ],
+      "name": "kusumanjali967",
+      "email": "kusumanjali967@gmail.com"
+    },
+    {
+      "skinType": "Normal",
+      "skinIssues": [],
+      "currentProducts": [
+        {
+          "id": 1,
+          "name": "COSRX Low pH Cleanser"
+        },
+        {
+          "id": 2,
+          "name": "Beauty of Joseon Sunscreen"
+        },
+        {
+          "id": 1776588539899,
+          "name": "AHA/BHA Gentle Peeling Solution"
+        }
+      ],
+      "morningRoutine": [
+        {
+          "id": 1,
+          "name": "Gentle Cleanser",
+          "completed": true
+        },
+        {
+          "id": 2,
+          "name": "Vitamin C Serum",
+          "completed": false
+        },
+        {
+          "id": 3,
+          "name": "SPF 50 Sunscreen",
+          "completed": false
+        }
+      ],
+      "score": 0,
+      "history": [
+        {
+          "date": "2026-04-19T08:48:59.899Z",
+          "type": "Scan",
+          "result": "Dullness"
+        }
+      ],
+      "name": "mhggduyjhb",
+      "email": "mhggduyjhb@gmail.com"
+    },
+    {
+      "skinType": "Dry",
+      "skinIssues": [
+        "Oily T-Zone"
+      ],
+      "currentProducts": [],
+      "morningRoutine": [
+        {
+          "id": 1,
+          "name": "Gentle Cleanser",
+          "completed": false
+        },
+        {
+          "id": 2,
+          "name": "Vitamin C Serum",
+          "completed": true
+        },
+        {
+          "id": 3,
+          "name": "SPF 50 Sunscreen",
+          "completed": true
+        }
+      ],
+      "score": 0,
+      "history": [
+        {
+          "date": "2026-04-19T08:48:59.899Z",
+          "type": "Scan",
+          "result": "Dullness"
+        }
+      ],
+      "name": "text967",
+      "email": "text967@gmail.com",
+      "nightRoutine": [
+        {
+          "id": 1776609977502,
+          "name": "night cream",
+          "completed": true
+        }
+      ]
+    },
+    {
+      "skinType": "Dry",
+      "skinIssues": [],
+      "currentProducts": [],
+      "morningRoutine": [
+        {
+          "id": 1,
+          "name": "Gentle Cleanser",
+          "completed": false
+        },
+        {
+          "id": 2,
+          "name": "Vitamin C Serum",
+          "completed": true
+        },
+        {
+          "id": 3,
+          "name": "SPF 50 Sunscreen",
+          "completed": true
+        }
+      ],
+      "score": 0,
+      "history": [
+        {
+          "date": "2026-04-19T08:48:59.899Z",
+          "type": "Scan",
+          "result": "Dullness"
+        }
+      ],
+      "name": "text96",
+      "email": "text96@gmail.com"
+    },
+    {
+      "skinType": "Dry",
+      "skinIssues": [],
+      "currentProducts": [],
+      "morningRoutine": [
+        {
+          "id": 1,
+          "name": "Gentle Cleanser",
+          "completed": false
+        },
+        {
+          "id": 2,
+          "name": "Vitamin C Serum",
+          "completed": false
+        },
+        {
+          "id": 3,
+          "name": "SPF 50 Sunscreen",
+          "completed": false
+        }
+      ],
+      "score": 0,
+      "history": [
+        {
+          "date": "2026-04-19T08:48:59.899Z",
+          "type": "Scan",
+          "result": "Dullness"
+        }
+      ],
+      "name": "example",
+      "email": "example@gmail.com"
+    },
+    {
+      "skinType": "Combination",
+      "skinIssues": [
+        "Acne breakouts"
+      ],
+      "currentProducts": [
+        {
+          "id": 1776591305342,
+          "name": "jjrtihjg"
+        },
+        {
+          "id": 1776591310142,
+          "name": "uyrhgnjviuh"
+        }
+      ],
+      "morningRoutine": [
+        {
+          "id": 1,
+          "name": "Gentle Cleanser",
+          "completed": true
+        },
+        {
+          "id": 2,
+          "name": "Vitamin C Serum",
+          "completed": false
+        },
+        {
+          "id": 3,
+          "name": "SPF 50 Sunscreen",
+          "completed": true
+        }
+      ],
+      "score": 0,
+      "history": [
+        {
+          "date": "2026-04-19T08:48:59.899Z",
+          "type": "Scan",
+          "result": "Dullness"
+        }
+      ],
+      "name": "people",
+      "email": "people@gmail.com"
+    },
+    {
+      "skinType": "Combination",
+      "skinIssues": [],
+      "currentProducts": [],
+      "morningRoutine": [
+        {
+          "id": 1,
+          "name": "Gentle Cleanser",
+          "completed": false
+        },
+        {
+          "id": 2,
+          "name": "Vitamin C Serum",
+          "completed": true
+        },
+        {
+          "id": 3,
+          "name": "SPF 50 Sunscreen",
+          "completed": true
+        }
+      ],
+      "score": 0,
+      "history": [
+        {
+          "date": "2026-04-19T08:48:59.899Z",
+          "type": "Scan",
+          "result": "Dullness"
+        }
+      ],
+      "name": "example12",
+      "email": "example12@gmail.com",
+      "nightRoutine": [
+        {
+          "id": 1776609977502,
+          "name": "night cream",
+          "completed": true
+        }
+      ]
+    },
+    {
+      "skinType": "Oily",
+      "skinIssues": [
+        "Dark Spots"
+      ],
+      "currentProducts": [
+        {
+          "id": 1776611269533,
+          "name": "cera ve facewash"
+        },
+        {
+          "id": 1776611369068,
+          "name": "Vitamin C 15% Brightening drops"
+        }
+      ],
+      "morningRoutine": [
+        {
+          "id": 1776612241904,
+          "name": "CeraVe Foaming Cleanser",
+          "completed": false
+        },
+        {
+          "id": 1776612241905,
+          "name": "The Ordinary Niacinamide",
+          "completed": false
+        },
+        {
+          "id": 1776612241906,
+          "name": "Neutrogena Hydro Boost Sunscreen SPF 50",
+          "completed": false
+        }
+      ],
+      "nightRoutine": [
+        {
+          "id": 1776612241907,
+          "name": "CeraVe Foaming Cleanser",
+          "completed": false
+        },
+        {
+          "id": 1776612241908,
+          "name": "Paula's Choice 2% BHA Liquid",
+          "completed": false
+        },
+        {
+          "id": 1776612241909,
+          "name": "Neutrogena Hydro Boost Gel",
+          "completed": false
+        }
+      ],
+      "score": 0,
+      "history": [
+        {
+          "date": "2026-04-19T15:09:29.068Z",
+          "type": "Scan",
+          "result": "Dark Spots"
+        }
+      ],
+      "email": "text34@gmail.com",
+      "name": "text34"
+    },
+    {
+      "skinType": "Oily",
+      "skinIssues": [],
+      "currentProducts": [],
+      "morningRoutine": [
+        {
+          "id": 1776612563045,
+          "name": "CeraVe Foaming Cleanser",
+          "completed": false
+        },
+        {
+          "id": 1776612563046,
+          "name": "The Ordinary Niacinamide",
+          "completed": false
+        },
+        {
+          "id": 1776612563047,
+          "name": "Neutrogena Hydro Boost Sunscreen SPF 50",
+          "completed": false
+        }
+      ],
+      "nightRoutine": [
+        {
+          "id": 1776612563048,
+          "name": "CeraVe Foaming Cleanser",
+          "completed": false
+        },
+        {
+          "id": 1776612563049,
+          "name": "Paula's Choice 2% BHA Liquid",
+          "completed": false
+        },
+        {
+          "id": 1776612563050,
+          "name": "Neutrogena Hydro Boost Gel",
+          "completed": false
+        }
+      ],
+      "score": 0,
+      "history": [],
+      "email": "irggidnj@gmail.com",
+      "name": "irggidnj"
+    },
+    {
+      "skinType": "Dry",
+      "skinIssues": [],
+      "currentProducts": [],
+      "morningRoutine": [
+        {
+          "id": 1776612645884,
+          "name": "CeraVe Hydrating Cleanser",
+          "completed": false
+        },
+        {
+          "id": 1776612645885,
+          "name": "COSRX Snail Mucin 96 Essence",
+          "completed": false
+        },
+        {
+          "id": 1776612645886,
+          "name": "Isntree Watery Sun Gel SPF 50",
+          "completed": false
+        }
+      ],
+      "nightRoutine": [
+        {
+          "id": 1776612645887,
+          "name": "CeraVe Hydrating Cleanser",
+          "completed": false
+        },
+        {
+          "id": 1776612645888,
+          "name": "The Ordinary Hyaluronic Acid",
+          "completed": false
+        },
+        {
+          "id": 1776612645889,
+          "name": "Vanicream Daily Facial Moisturizer",
+          "completed": false
+        }
+      ],
+      "score": 0,
+      "history": [],
+      "email": "irggidnj765@gmail.com",
+      "name": "irggidnj765"
+    }
+  ]
+}

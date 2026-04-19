@@ -10,9 +10,14 @@ export default function Login() {
   const handleLogin = async (e) => {
     e.preventDefault();
     const email = e.target.querySelector('input[type="email"]').value;
-    await login(email);
-    // Direct back to onboarding or dashboard
-    navigate('/dashboard');
+    const result = await login(email);
+    
+    // Explicitly check if it's a freshly created user or an old user
+    if (result && result.isNew) {
+      navigate('/onboarding');
+    } else {
+      navigate('/dashboard');
+    }
   };
 
   return (

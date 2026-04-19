@@ -10,8 +10,8 @@
   --success: #678b66; /* Sage green */
   --danger: #cf6679;
   --warning: #f2c94c;
-  --glass-bg: rgba(255, 255, 255, 0.7);
-  --glass-border: rgba(255, 255, 255, 0.5);
+  --glass-bg: rgba(255, 255, 255, 0.5);
+  --glass-border: rgba(255, 255, 255, 0.8);
   --card-shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
   --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
   --font-base: 'Outfit', sans-serif;
@@ -29,8 +29,8 @@
     --accent: #e2a195;
     --accent-light: #442a25;
     --success: #7da57b;
-    --glass-bg: rgba(30, 30, 30, 0.7);
-    --glass-border: rgba(255, 255, 255, 0.05);
+    --glass-bg: rgba(30, 30, 30, 0.45);
+    --glass-border: rgba(255, 255, 255, 0.08);
     --card-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
   }
 }
@@ -153,3 +153,17 @@ p {
 }
 
 /* Bottom Nav classes later */
+
+.hover-lift {
+  transition: var(--transition);
+}
+.hover-lift:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.1);
+}
+
+@media (prefers-color-scheme: dark) {
+  .hover-lift:hover {
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
+  }
+}

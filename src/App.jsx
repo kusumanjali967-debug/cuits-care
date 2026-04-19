@@ -7,6 +7,8 @@ import Dashboard from './pages/Dashboard';
 import CameraAnalysis from './pages/CameraAnalysis';
 import MySkinIssues from './pages/MySkinIssues';
 import MyCurrentProducts from './pages/MyCurrentProducts';
+import MyScanHistory from './pages/MyScanHistory';
+import EditRoutine from './pages/EditRoutine';
 
 function App() {
   return (
@@ -20,6 +22,8 @@ function App() {
         <Route path="/profile" element={<Profile />} />
         <Route path="/profile/issues" element={<MySkinIssues />} />
         <Route path="/profile/products" element={<MyCurrentProducts />} />
+        <Route path="/profile/history" element={<MyScanHistory />} />
+        <Route path="/routine/edit" element={<EditRoutine />} />
       </Routes>
     </div>
   );

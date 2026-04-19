@@ -1,9 +1,11 @@
 import { useState, useRef, useEffect } from 'react';
-import { Camera, X, RefreshCw, CheckCircle, Search, AlertCircle } from 'lucide-react';
+import { Camera, X, RefreshCw, CheckCircle, Search, AlertCircle, Plus } from 'lucide-react';
 import BottomNav from '../components/BottomNav';
+import { useUser } from '../context/UserContext';
 import './CameraAnalysis.css';
 
 export default function CameraAnalysis() {
+  const { userData, updateUserData } = useUser();
   const [stream, setStream] = useState(null);
   const [imgSrc, setImgSrc] = useState(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -59,12 +61,31 @@ export default function CameraAnalysis() {
       setIsAnalyzing(true);
       setTimeout(() => {
         setIsAnalyzing(false);
+        
+        // Dynamic diagnosis based on profile
+        const userIssues = userData?.skinIssues || [];
+        const targetedIssue = userIssues.length > 0 
+          ? userIssues[Math.floor(Math.random() * userIssues.length)]
+          : "Mild Dehydration";
+          
+        const recommendations = {
+          "Acne breakouts": { desc: "We detected some active inflammation and localized redness.", product: "Salicylic Acid 2% Exfoliator" },
+          "Redness / Sensitivity": { desc: "Your skin barrier appears slightly compromised with mild redness.", product: "Centella Asiatica Soothing Serum" },
+          "Dark Spots": { desc: "We noticed some hyperpigmentation forming on the cheeks.", product: "Vitamin C 15% Brightening drops" },
+          "Fine Lines": { desc: "Early signs of fine lines detected around the sensitive areas.", product: "Retinol 0.1% Night Cream" },
+          "Dullness": { desc: "Surface texture looks slightly congested, causing dullness.", product: "AHA/BHA Gentle Peeling Solution" },
+          "Mild Dehydration": { desc: "We detected some dry patches on your cheeks and slight flakiness.", product: "Hyaluronic Acid Moisture Cream" }
+        };
+
+        const rec = recommendations[targetedIssue] || recommendations["Mild Dehydration"];
+
         setResults({
-          issue: "Mild redness & Dehydration",
-          description: "We detected some dry patches on your cheeks and slight inflammation.",
-          recommendation: "Try a hydrating serum with Hyaluronic Acid and Centella Asiatica."
+          issue: targetedIssue,
+          description: rec.desc,
+          recommendation: rec.product,
+          saved: false
         });
-      }, 2500);
+      }, 3000);
     }
   };
 
@@ -72,6 +93,22 @@ export default function CameraAnalysis() {
     setImgSrc(null);
     setResults(null);
     startCamera();
+  };
+
+  const handleSaveToRoutine = () => {
+    if (!results || results.saved) return;
+    
+    updateUserData({
+      currentProducts: [
+        ...(userData.currentProducts || []),
+        { id: Date.now(), name: results.recommendation }
+      ],
+      history: [
+        ...(userData.history || []),
+        { date: new Date().toISOString(), type: 'Scan', result: results.issue }
+      ]
+    });
+    setResults(prev => ({ ...prev, saved: true }));
   };
 
   return (
@@ -93,6 +130,9 @@ export default function CameraAnalysis() {
       {stream && (
         <div className="camera-view">
           <video ref={videoRef} autoPlay playsInline className="video-feed" />
+          <div className="scanner-ui">
+            <div className="scan-corners"></div>
+          </div>
           <div className="camera-controls">
             <button className="icon-btn close-cam" onClick={stopCamera}>
               <X size={28} color="#fff" />
@@ -110,7 +150,9 @@ export default function CameraAnalysis() {
         <div className="analysis-view pad-screen stack-y">
           <div className="img-preview-container">
             <img src={imgSrc} alt="Captured skin" className="img-preview" />
-            <button className="retake-btn glass-panel" onClick={retakePhoto}>
+            {isAnalyzing && <div className="scanning-laser"></div>}
+            
+            <button className="retake-btn glass-panel" onClick={retakePhoto} style={{ display: isAnalyzing ? 'none' : 'flex' }}>
               <RefreshCw size={16} /> Retake
             </button>
           </div>
@@ -139,7 +181,19 @@ export default function CameraAnalysis() {
                   <div className="check-icon"><CheckCircle size={24} color="var(--success)" /></div>
                   <p>{results.recommendation}</p>
                 </div>
-                <button className="btn-primary" style={{ marginTop: '12px' }}>Shop Suggested Products</button>
+                
+                <button 
+                  className={`btn-primary ${results.saved ? 'saved-state' : ''}`} 
+                  style={{ marginTop: '12px' }}
+                  onClick={handleSaveToRoutine}
+                  disabled={results.saved}
+                >
+                  {results.saved ? (
+                    <><CheckCircle size={20}/> Added to Profile</>
+                  ) : (
+                    <><Plus size={20}/> Add to My Routine</>
+                  )}
+                </button>
               </div>
             </div>
           )}

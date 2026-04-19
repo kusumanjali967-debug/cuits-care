@@ -1,12 +1,17 @@
 import { useNavigate } from 'react-router-dom';
-import { User, Settings, LogOut, Info, Heart } from 'lucide-react';
+import { User, Settings, LogOut, Info, Heart, Clock } from 'lucide-react';
 import BottomNav from '../components/BottomNav';
 import { useUser } from '../context/UserContext';
 import './Profile.css';
 
 export default function Profile() {
   const navigate = useNavigate();
-  const { userData } = useUser();
+  const { userData, logout } = useUser();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  };
 
   return (
     <div className="profile-container pb-nav fade-in">
@@ -26,6 +31,10 @@ export default function Profile() {
         </div>
 
         <div className="profile-menu stack-y">
+          <button className="menu-item glass-panel" onClick={() => navigate('/profile/history')}>
+            <div className="menu-icon-wrapper"><Clock size={20} /></div>
+            <span>My Scan History</span>
+          </button>
           <button className="menu-item glass-panel" onClick={() => navigate('/profile/issues')}>
             <div className="menu-icon-wrapper"><Info size={20} /></div>
             <span>My Skin Issues</span>
@@ -38,7 +47,7 @@ export default function Profile() {
             <div className="menu-icon-wrapper"><Settings size={20} /></div>
             <span>Settings</span>
           </button>
-          <button className="menu-item glass-panel item-danger" onClick={() => navigate('/')}>
+          <button className="menu-item glass-panel item-danger" onClick={handleLogout}>
             <div className="menu-icon-wrapper danger-bg"><LogOut size={20} /></div>
             <span>Log Out</span>
           </button>

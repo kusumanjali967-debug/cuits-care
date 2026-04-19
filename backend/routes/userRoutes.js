@@ -1,39 +1,81 @@
-import express from 'express';
-import User from '../models/User.js';
+import express from "express";
+import fs from "fs/promises";
+import path from "path";
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const DB_PATH = path.join(__dirname, "../database.json");
 
 const router = express.Router();
 
-// GET /api/user/:email -> Get user profile by email
-router.get('/:email', async (req, res) => {
+// Helper to interact with json db
+const getDB = async () => {
   try {
-    const user = await User.findOne({ email: req.params.email });
-    if (user) {
-      res.json(user);
-    } else {
-      res.status(404).json({ message: 'User not found' });
+    const data = await fs.readFile(DB_PATH, "utf-8");
+    return JSON.parse(data);
+  } catch (err) {
+    if (err.code === "ENOENT") {
+      await fs.writeFile(DB_PATH, JSON.stringify({ users: [] }));
+      return { users: [] };
     }
+    throw err;
+  }
+};
+
+const saveDB = async (data) => {
+  await fs.writeFile(DB_PATH, JSON.stringify(data, null, 2));
+};
+
+// =====================
+// GET USER BY EMAIL
+// =====================
+router.get("/:email", async (req, res) => {
+  try {
+    const db = await getDB();
+    const user = db.users.find(u => u.email === req.params.email);
+    
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+    res.json(user);
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ success: false, message: error.message });
   }
 });
 
-// POST /api/user -> Create or update user profile
-router.post('/', async (req, res) => {
+// =====================
+// UPSERT / SYNC USER DATA
+// =====================
+router.post("/", async (req, res) => {
   try {
     const { email } = req.body;
-    
-    // If no email is provided, we can't save/update properly
-    if (!email) {
-      return res.status(400).json({ message: 'Email is required to identify the user.' });
+    if (!email) return res.status(400).json({ success: false, message: "Email required" });
+
+    const db = await getDB();
+    const index = db.users.findIndex(u => u.email === email);
+
+    let user;
+    if (index !== -1) {
+      // Update existing
+      user = { ...db.users[index], ...req.body };
+      db.users[index] = user;
+    } else {
+      // Create new
+      user = { 
+        skinType: "Unknown", 
+        skinIssues: [], 
+        currentProducts: [], 
+        morningRoutine: [], 
+        nightRoutine: [],
+        score: 0, 
+        history: [], 
+        ...req.body 
+      };
+      db.users.push(user);
     }
-
-    // Find the user by email, and update, or create a new one if not found
-    const user = await User.findOneAndUpdate(
-      { email },
-      req.body,
-      { new: true, upsert: true } // upsert: true creates a new document if one doesn't exist
-    );
-
+    
+    await saveDB(db);
     res.json(user);
   } catch (error) {
     res.status(500).json({ message: 'Server error', error: error.message });

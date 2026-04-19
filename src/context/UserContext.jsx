@@ -11,15 +11,9 @@ export const UserProvider = ({ children }) => {
       email: "",
       skinType: "Unknown",
       skinIssues: [],
-      currentProducts: [
-        { id: 1, name: 'COSRX Low pH Cleanser' },
-        { id: 2, name: 'Beauty of Joseon Sunscreen' }
-      ],
-      morningRoutine: [
-        { id: 1, name: "Gentle Cleanser", completed: false },
-        { id: 2, name: "Vitamin C Serum", completed: false },
-        { id: 3, name: "SPF 50 Sunscreen", completed: false }
-      ]
+      currentProducts: [],
+      morningRoutine: [],
+      nightRoutine: []
     };
   });
 
@@ -52,9 +46,10 @@ export const UserProvider = ({ children }) => {
       if (res.ok) {
         const data = await res.json();
         setUserData(data);
+        return { user: data, isNew: false };
       } else {
         // Create new user if not exists
-        const newUserData = { ...userData, email, name: email.split('@')[0] };
+        const newUserData = { email, name: email.split('@')[0] };
         const postRes = await fetch('/api/user', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -63,11 +58,13 @@ export const UserProvider = ({ children }) => {
         if (postRes.ok) {
           const data = await postRes.json();
           setUserData(data);
+          return { user: data, isNew: true };
         }
       }
     } catch (error) {
       console.error("Login failed", error);
     }
+    return null;
   };
 
   const syncToDB = async (newData) => {
@@ -95,7 +92,10 @@ export const UserProvider = ({ children }) => {
     setUserData(prev => {
       const updated = {
         ...prev,
-        morningRoutine: prev.morningRoutine.map(item => 
+        morningRoutine: (prev.morningRoutine || []).map(item => 
+          item.id === id ? { ...item, completed: !item.completed } : item
+        ),
+        nightRoutine: (prev.nightRoutine || []).map(item => 
           item.id === id ? { ...item, completed: !item.completed } : item
         )
       };
@@ -104,8 +104,22 @@ export const UserProvider = ({ children }) => {
     });
   };
 
+  const logout = () => {
+    localStorage.removeItem('cuitsCareUserEmail');
+    setUserData({
+      name: "Guest",
+      email: "",
+      skinType: "Unknown",
+      skinIssues: [],
+      currentProducts: [],
+      morningRoutine: [],
+      nightRoutine: [],
+      history: []
+    });
+  };
+
   return (
-    <UserContext.Provider value={{ userData, updateUserData, toggleRoutine, login, loading }}>
+    <UserContext.Provider value={{ userData, updateUserData, toggleRoutine, login, logout, loading }}>
       {!loading && children}
     </UserContext.Provider>
   );
