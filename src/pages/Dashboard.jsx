@@ -125,18 +125,18 @@ export default function Dashboard() {
 
     if (skinType === 'Oily' || skinType === 'Combination') {
       products = [
-        { id: 's1', name: 'Purifying Foaming Cleanser', type: 'Cleanser', rating: 4.8, img: '/cleanser_product_1776610783682.png' },
-        { id: 's2', name: 'Oil-Free Matte Gel', type: 'Moisturizer', rating: 4.7, img: '/moisturizer_product_1776610911779.png' },
+        { id: 's1', name: 'Purifying Foaming Cleanser', type: 'Cleanser', rating: 4.8, img: '/oily_cleanser_1777102612025.png' },
+        { id: 's2', name: 'Oil-Free Matte Gel', type: 'Moisturizer', rating: 4.7, img: '/oily_moisturizer_1777102628330.png' },
       ];
     } else if (skinType === 'Dry') {
       products = [
-        { id: 's4', name: 'Hydrating Milky Cleanser', type: 'Cleanser', rating: 4.7, img: '/cleanser_product_1776610783682.png' },
-        { id: 's6', name: 'Deep Moisture Rescue Cream', type: 'Moisturizer', rating: 4.8, img: '/moisturizer_product_1776610911779.png' },
+        { id: 's4', name: 'Hydrating Milky Cleanser', type: 'Cleanser', rating: 4.7, img: '/dry_cleanser_1777102677018.png' },
+        { id: 's6', name: 'Deep Moisture Rescue Cream', type: 'Moisturizer', rating: 4.8, img: '/dry_moisturizer_1777102645442.png' },
       ];
     } else if (skinType === 'Sensitive') {
       products = [
-        { id: 's7', name: 'Soothing Barrier Cleanser', type: 'Cleanser', rating: 4.8, img: '/cleanser_product_1776610783682.png' },
-        { id: 's9', name: 'Gentle Repair Ceramide Cream', type: 'Moisturizer', rating: 4.9, img: '/moisturizer_product_1776610911779.png' },
+        { id: 's7', name: 'Soothing Barrier Cleanser', type: 'Cleanser', rating: 4.8, img: '/dry_cleanser_1777102677018.png' },
+        { id: 's9', name: 'Gentle Repair Ceramide Cream', type: 'Moisturizer', rating: 4.9, img: '/dry_moisturizer_1777102645442.png' },
       ];
     } else {
       products = [
