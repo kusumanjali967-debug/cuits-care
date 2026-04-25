@@ -68,21 +68,41 @@ export default function CameraAnalysis() {
           ? userIssues[0] 
           : "Mild Dehydration";
           
-        const recommendations = {
-          "Acne breakouts": { desc: "Active inflammation detected in the T-zone. Pores appear congested.", product: "Salicylic Acid 2% Exfoliator" },
-          "Redness / Sensitivity": { desc: "Barrier compromise detected on the cheeks. Visible capillary dilation.", product: "Centella Asiatica Soothing Serum" },
-          "Dark Spots": { desc: "Melanin clustering detected in the cheekbone area. Uneven pigmentation.", product: "Vitamin C 15% Brightening drops" },
-          "Fine Lines": { desc: "Decreased elasticity and fine lines detected around the periorbital area.", product: "Retinol 0.1% Night Cream" },
-          "Dullness": { desc: "Uneven surface texture and accumulation of dead skin cells detected.", product: "AHA/BHA Gentle Peeling Solution" },
-          "Mild Dehydration": { desc: "Low moisture levels detected across the U-zone. Epidermis appears dry.", product: "Hyaluronic Acid Moisture Cream" }
+        const skinType = userData?.skinType || 'Unknown';
+        
+        const getPersonalizedProduct = (issue, type) => {
+          if (issue === "Acne breakouts") {
+            return type === "Sensitive" ? "Gentle PHA Exfoliating Toner" : type === "Dry" ? "Hydrating BHA Liquid" : "Salicylic Acid 2% Exfoliator";
+          }
+          if (issue === "Redness / Sensitivity") {
+            return type === "Oily" ? "Lightweight Centella Gel" : "Centella Asiatica Soothing Serum";
+          }
+          if (issue === "Dark Spots") {
+            return type === "Sensitive" ? "Niacinamide 5% Brightening Serum" : "Vitamin C 15% Brightening drops";
+          }
+          if (issue === "Fine Lines") {
+            return type === "Sensitive" ? "Bakuchiol Gentle Aging Cream" : "Retinol 0.1% Night Cream";
+          }
+          if (issue === "Dullness") {
+            return type === "Dry" ? "Lactic Acid 5% Hydrating Serum" : "AHA/BHA Gentle Peeling Solution";
+          }
+          // Default: Dehydration
+          return type === "Oily" ? "Oil-Free Hyaluronic Water Gel" : "Hyaluronic Acid Moisture Cream";
         };
 
-        const rec = recommendations[targetedIssue] || recommendations["Mild Dehydration"];
+        const recDesc = {
+          "Acne breakouts": "Active inflammation detected in the T-zone. Pores appear congested.",
+          "Redness / Sensitivity": "Barrier compromise detected on the cheeks. Visible capillary dilation.",
+          "Dark Spots": "Melanin clustering detected in the cheekbone area. Uneven pigmentation.",
+          "Fine Lines": "Decreased elasticity and fine lines detected around the periorbital area.",
+          "Dullness": "Uneven surface texture and accumulation of dead skin cells detected.",
+          "Mild Dehydration": "Low moisture levels detected across the U-zone. Epidermis appears dry."
+        };
 
         setResults({
           issue: targetedIssue,
-          description: rec.desc,
-          recommendation: rec.product,
+          description: recDesc[targetedIssue] || recDesc["Mild Dehydration"],
+          recommendation: getPersonalizedProduct(targetedIssue, skinType),
           confidence: Math.floor(Math.random() * 15) + 84, // 84-98%
           saved: false
         });
