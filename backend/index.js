@@ -26,7 +26,7 @@ app.use(express.static(buildPath));
 app.use('/api/user', userRoutes);
 
 // Handle any requests that don't match the API routes by returning the React app
-app.get('*', (req, res) => {
+app.get(/.*/, (req, res) => {
   res.sendFile(path.join(buildPath, 'index.html'));
 });
 
@@ -36,7 +36,7 @@ const startServer = async () => {
     const mongoUri = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/cuits-care";
     await mongoose.connect(mongoUri);
     console.log('✅ Connected to MongoDB');
-    
+
     app.listen(PORT, () => {
       console.log(`🚀 Server running on http://localhost:${PORT}`);
     });
