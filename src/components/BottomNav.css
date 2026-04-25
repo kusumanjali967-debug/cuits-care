@@ -58,3 +58,61 @@
 .pb-nav {
   padding-bottom: 90px;
 }
+
+@media (min-width: 768px) {
+  .bottom-nav {
+    top: 0;
+    bottom: auto;
+    max-width: 1200px;
+    height: 70px;
+    border-top: none;
+    border-bottom: 1px solid var(--glass-border);
+    justify-content: flex-end;
+    padding: 0 40px;
+    gap: 32px;
+  }
+  
+  .nav-item {
+    flex-direction: row;
+    flex: 0 0 auto;
+    font-size: 1rem;
+  }
+  
+  .nav-item span {
+    display: inline;
+  }
+
+  .camera-circle {
+    width: auto;
+    height: auto;
+    border-radius: var(--radius-md);
+    transform: none;
+    background: transparent;
+    color: var(--text-secondary);
+    box-shadow: none;
+    padding: 8px 16px;
+    gap: 8px;
+    display: flex;
+    align-items: center;
+    border: 1px solid transparent;
+  }
+  
+  .camera-circle::after {
+    content: "Scan Skin";
+    font-size: 1rem;
+    font-weight: 500;
+  }
+
+  .camera-btn.active .camera-circle {
+    transform: none;
+    box-shadow: none;
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+  }
+
+  .pb-nav {
+    padding-bottom: 0;
+    padding-top: 90px;
+  }
+}

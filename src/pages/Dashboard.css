@@ -225,3 +225,15 @@
   align-items: center;
   gap: 4px;
 }
+
+@media (min-width: 768px) {
+  .dashboard-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    align-items: stretch;
+  }
+  .dashboard-grid .skin-alert {
+    grid-column: 1 / -1;
+  }
+}

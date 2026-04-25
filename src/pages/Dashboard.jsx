@@ -163,7 +163,7 @@ export default function Dashboard() {
         </div>
       )}
 
-      <div className="pad-screen stack-y spacing-lg">
+      <div className="pad-screen dashboard-grid spacing-lg">
         {/* Environment Alert */}
         <div className="glass-panel alert-card skin-alert">
           <div className={`alert-icon-wrapper ${isHighUV ? 'uv-alert' : 'uv-safe'}`}>
@@ -229,7 +229,7 @@ export default function Dashboard() {
           </div>
         </section>
         {/* Suggested Products */}
-        <section className="dashboard-section stack-y">
+        <section className="dashboard-section stack-y" style={{ gridColumn: '1 / -1' }}>
           <div className="section-header">
             <h3>Suggested For You</h3>
             <span className="progress-text" style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: 400 }}>Based on {userData.skinType === 'Unknown' ? 'General' : userData.skinType} skin</span>

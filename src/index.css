@@ -52,13 +52,15 @@ body {
 }
 
 .mobile-container {
-  max-width: 480px;
+  max-width: 1200px;
   margin: 0 auto;
   min-height: 100vh;
   background-color: var(--bg-primary);
   position: relative;
   overflow-x: hidden;
   box-shadow: 0 0 40px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
 }
 
 @media (prefers-color-scheme: dark) {
