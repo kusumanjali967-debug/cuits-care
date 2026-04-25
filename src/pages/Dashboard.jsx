@@ -78,7 +78,16 @@ export default function Dashboard() {
           const temp = Math.round(data.current.temperature_2m);
           const uv = Math.round(data.current.uv_index);
           
-          setEnvData({ temp, uv, city: 'Current Location', loading: false });
+          let cityName = 'Current Location';
+          try {
+            const geoRes = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`);
+            const geoData = await geoRes.json();
+            cityName = geoData.address?.city || geoData.address?.town || geoData.address?.village || geoData.address?.county || 'Current Location';
+          } catch (geoErr) {
+            console.error("Geocoding error", geoErr);
+          }
+          
+          setEnvData({ temp, uv, city: cityName, loading: false });
         } catch (err) {
           setEnvData(prev => ({ ...prev, loading: false }));
         }
@@ -111,35 +120,47 @@ export default function Dashboard() {
 
   const dietInsight = getDietInsight(userData.skinIssues, userData.skinType);
 
-  const getProductSuggestions = (skinType) => {
+  const getProductSuggestions = (skinType, issues = []) => {
+    let products = [];
+
     if (skinType === 'Oily' || skinType === 'Combination') {
-      return [
+      products = [
         { id: 's1', name: 'Purifying Foaming Cleanser', type: 'Cleanser', rating: 4.8, img: '/cleanser_product_1776610783682.png' },
-        { id: 's2', name: 'Niacinamide Balancing Serum', type: 'Serum', rating: 4.9, img: '/serum_product_1776610882923.png' },
-        { id: 's3', name: 'Oil-Free Matte Gel', type: 'Moisturizer', rating: 4.7, img: '/moisturizer_product_1776610911779.png' },
+        { id: 's2', name: 'Oil-Free Matte Gel', type: 'Moisturizer', rating: 4.7, img: '/moisturizer_product_1776610911779.png' },
       ];
     } else if (skinType === 'Dry') {
-      return [
+      products = [
         { id: 's4', name: 'Hydrating Milky Cleanser', type: 'Cleanser', rating: 4.7, img: '/cleanser_product_1776610783682.png' },
-        { id: 's5', name: 'Hyaluronic Acid Drops', type: 'Serum', rating: 4.9, img: '/serum_product_1776610882923.png' },
         { id: 's6', name: 'Deep Moisture Rescue Cream', type: 'Moisturizer', rating: 4.8, img: '/moisturizer_product_1776610911779.png' },
       ];
     } else if (skinType === 'Sensitive') {
-      return [
+      products = [
         { id: 's7', name: 'Soothing Barrier Cleanser', type: 'Cleanser', rating: 4.8, img: '/cleanser_product_1776610783682.png' },
-        { id: 's8', name: 'Calming Centella Serum', type: 'Serum', rating: 4.9, img: '/serum_product_1776610882923.png' },
         { id: 's9', name: 'Gentle Repair Ceramide Cream', type: 'Moisturizer', rating: 4.9, img: '/moisturizer_product_1776610911779.png' },
       ];
     } else {
-      return [
+      products = [
         { id: 's10', name: 'Everyday Gentle Cleanser', type: 'Cleanser', rating: 4.7, img: '/cleanser_product_1776610783682.png' },
-        { id: 's11', name: 'Glow Enhancing Serum', type: 'Serum', rating: 4.8, img: '/serum_product_1776610882923.png' },
         { id: 's12', name: 'Daily Essential Moisturizer', type: 'Moisturizer', rating: 4.6, img: '/moisturizer_product_1776610911779.png' },
       ];
     }
+
+    if (issues.includes('Acne breakouts')) {
+      products.push({ id: 'i1', name: '2% BHA Salicylic Acid', type: 'Treatment', rating: 4.9, img: '/serum_product_1776610882923.png' });
+    } else if (issues.includes('Dark Spots') || issues.includes('Dullness')) {
+      products.push({ id: 'i2', name: '15% Vitamin C Brightening Serum', type: 'Serum', rating: 4.8, img: '/serum_product_1776610882923.png' });
+    } else if (issues.includes('Fine Lines')) {
+      products.push({ id: 'i3', name: 'Retinol 0.1% Night Serum', type: 'Serum', rating: 4.7, img: '/serum_product_1776610882923.png' });
+    } else if (issues.includes('Redness / Sensitivity')) {
+      products.push({ id: 'i4', name: 'Centella Asiatica Calming Ampoule', type: 'Serum', rating: 4.9, img: '/serum_product_1776610882923.png' });
+    } else {
+      products.push({ id: 'i5', name: 'Niacinamide Balancing Serum', type: 'Serum', rating: 4.9, img: '/serum_product_1776610882923.png' });
+    }
+
+    return products;
   };
 
-  const recommendedProducts = getProductSuggestions(userData.skinType);
+  const recommendedProducts = getProductSuggestions(userData.skinType, userData.skinIssues || []);
 
   return (
     <div className="dashboard-container pb-nav fade-in">
