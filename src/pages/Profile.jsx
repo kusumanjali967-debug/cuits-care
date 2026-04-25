@@ -31,7 +31,15 @@ export default function Profile() {
   };
 
   const saveProfile = () => {
-    updateUserData({ skinType: tempType, skinIssues: tempIssues });
+    const updates = { skinType: tempType, skinIssues: tempIssues };
+    
+    // If skin type changed, clear the routines so they regenerate with new products
+    if (tempType !== userData.skinType) {
+      updates.morningRoutine = [];
+      updates.nightRoutine = [];
+    }
+    
+    updateUserData(updates);
     setIsEditing(false);
   };
 
