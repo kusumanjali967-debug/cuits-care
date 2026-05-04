@@ -7,17 +7,20 @@ export default function SplashPage() {
 
   return (
     <div className="splash-container">
-      <div className="splash-content fade-in">
-        <div className="logo-wrapper">
+      <div className="splash-content">
+        <div className="logo-wrapper scale-in pulse-slow">
           <Sparkles size={48} color="var(--bg-primary)" />
         </div>
-        <h1 className="splash-title">Cuits Care</h1>
-        <p className="splash-subtitle">Personalized skin health and daily routine companion.</p>
+        <h1 className="splash-title slide-up text-gradient" style={{ animationDelay: '0.2s' }}>Cuits Care</h1>
+        <p className="splash-subtitle slide-up" style={{ animationDelay: '0.3s' }}>
+          Personalized skin health and daily routine companion.
+        </p>
       </div>
       
-      <div className="splash-action fade-in" style={{ animationDelay: '0.4s' }}>
-        <button className="btn-primary btn-large" onClick={() => navigate('/login')}>
-          Get Started <ArrowRight size={20} />
+      <div className="splash-action slide-up" style={{ animationDelay: '0.5s' }}>
+        <button className="btn-primary btn-large hover-lift" onClick={() => navigate('/login')}>
+          <span>Get Started</span>
+          <ArrowRight size={20} className="arrow-icon" />
         </button>
       </div>
     </div>

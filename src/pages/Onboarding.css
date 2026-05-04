@@ -106,7 +106,9 @@
   transition: var(--transition);
 }
 
-.tag-btn:hover, .tag-btn:focus, .tag-btn.selected {
+.tag-btn:hover,
+.tag-btn:focus,
+.tag-btn.selected {
   background-color: var(--accent);
   color: #fff;
   border-color: var(--accent);

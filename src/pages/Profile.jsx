@@ -45,24 +45,25 @@ export default function Profile() {
 
   return (
     <div className="profile-container pb-nav fade-in">
-      <div className="profile-header pad-screen" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <div className="profile-header pad-screen slide-up" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <h2>My Profile</h2>
-        <button className="icon-btn" onClick={() => setIsEditing(!isEditing)}>
+        <button className="icon-btn hover-lift" onClick={() => setIsEditing(!isEditing)}>
           {isEditing ? <X size={24} /> : <Edit3 size={24} />}
         </button>
       </div>
 
       <div className="pad-screen stack-y spacing-lg">
         {isEditing ? (
-          <div className="glass-panel profile-card stack-y" style={{ alignItems: 'flex-start' }}>
+          <div className="glass-panel profile-card stack-y scale-in" style={{ alignItems: 'flex-start' }}>
             <h3>Edit Skin Profile</h3>
             
             <div style={{ width: '100%', marginTop: '12px' }}>
-              <label style={{ display: 'block', marginBottom: '8px', fontWeight: 500 }}>Skin Type</label>
+              <label style={{ display: 'block', marginBottom: '8px', fontWeight: 600 }}>Skin Type</label>
               <select 
                 value={tempType} 
                 onChange={(e) => setTempType(e.target.value)}
-                style={{ width: '100%', padding: '10px', borderRadius: '8px', background: 'var(--bg-primary)', border: '1px solid var(--glass-border)', color: 'var(--text-primary)' }}
+                className="input-field hover-lift"
+                style={{ cursor: 'pointer', padding: '14px' }}
               >
                 <option value="Unknown">Unknown</option>
                 <option value="Normal">Normal</option>
@@ -74,7 +75,7 @@ export default function Profile() {
             </div>
 
             <div style={{ width: '100%', marginTop: '16px' }}>
-              <label style={{ display: 'block', marginBottom: '8px', fontWeight: 500 }}>Skin Issues</label>
+              <label style={{ display: 'block', marginBottom: '8px', fontWeight: 600 }}>Skin Issues</label>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
                 {COMMON_ISSUES.map(issue => {
                   const isActive = tempIssues.includes(issue);
@@ -82,14 +83,17 @@ export default function Profile() {
                     <button 
                       key={issue} 
                       onClick={() => toggleIssue(issue)}
+                      className="hover-lift"
                       style={{
-                        padding: '6px 12px',
+                        padding: '10px 16px',
                         borderRadius: '20px',
-                        fontSize: '0.8rem',
-                        background: isActive ? 'var(--accent)' : 'transparent',
+                        fontSize: '0.85rem',
+                        fontWeight: isActive ? 600 : 500,
+                        background: isActive ? 'var(--accent-gradient)' : 'var(--glass-bg)',
                         color: isActive ? '#fff' : 'var(--text-primary)',
-                        border: `1px solid ${isActive ? 'var(--accent)' : 'var(--glass-border)'}`,
-                        cursor: 'pointer'
+                        border: `1px solid ${isActive ? 'transparent' : 'var(--glass-border)'}`,
+                        cursor: 'pointer',
+                        transition: 'all 0.3s ease'
                       }}
                     >
                       {issue}
@@ -99,41 +103,41 @@ export default function Profile() {
               </div>
             </div>
 
-            <button className="btn-primary" style={{ marginTop: '20px' }} onClick={saveProfile}>
-              <Check size={18} style={{ marginRight: '8px' }} /> Save Changes
+            <button className="btn-primary hover-lift" style={{ marginTop: '20px' }} onClick={saveProfile}>
+              <Check size={18} style={{ marginRight: '8px' }} /> <span>Save Changes</span>
             </button>
           </div>
         ) : (
-          <div className="glass-panel profile-card">
-            <div className="profile-avatar">
-              <User size={36} color="var(--bg-primary)" />
+          <div className="glass-panel profile-card slide-up hover-lift" style={{ animationDelay: '0.1s' }}>
+            <div className="profile-avatar pulse-slow">
+              <User size={36} color="#fff" />
             </div>
             <div className="profile-info">
               <h3>{userData.name}</h3>
               <span className="skin-type-badge">Skin Type: {userData.skinType}</span>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginTop: '8px' }}>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '12px' }}>
                 {(userData.skinIssues || []).map(issue => (
-                  <span key={issue} style={{ fontSize: '0.7rem', background: 'var(--glass-bg)', padding: '2px 8px', borderRadius: '12px' }}>{issue}</span>
+                  <span key={issue} style={{ fontSize: '0.75rem', background: 'var(--glass-bg)', padding: '6px 12px', borderRadius: '12px', fontWeight: 500 }}>{issue}</span>
                 ))}
               </div>
             </div>
           </div>
         )}
 
-        <div className="profile-menu stack-y">
-          <button className="menu-item glass-panel" onClick={() => navigate('/profile/history')}>
+        <div className="profile-menu stack-y slide-up" style={{ animationDelay: '0.2s' }}>
+          <button className="menu-item glass-panel hover-lift" onClick={() => navigate('/profile/history')}>
             <div className="menu-icon-wrapper"><Clock size={20} /></div>
             <span>My Scan History</span>
           </button>
-          <button className="menu-item glass-panel" onClick={() => navigate('/profile/products')}>
+          <button className="menu-item glass-panel hover-lift" onClick={() => navigate('/profile/products')}>
             <div className="menu-icon-wrapper"><Heart size={20} /></div>
             <span>My Current Products</span>
           </button>
-          <button className="menu-item glass-panel">
+          <button className="menu-item glass-panel hover-lift">
             <div className="menu-icon-wrapper"><Settings size={20} /></div>
             <span>Settings</span>
           </button>
-          <button className="menu-item glass-panel item-danger" onClick={handleLogout}>
+          <button className="menu-item glass-panel item-danger hover-lift" onClick={handleLogout}>
             <div className="menu-icon-wrapper danger-bg"><LogOut size={20} /></div>
             <span>Log Out</span>
           </button>

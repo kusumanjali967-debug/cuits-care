@@ -164,7 +164,7 @@ export default function Dashboard() {
 
   return (
     <div className="dashboard-container pb-nav fade-in">
-      <div className="dashboard-header pad-screen">
+      <div className="dashboard-header pad-screen slide-up">
         <div className="header-text">
           <p className="greeting">{greeting}</p>
           <h2>{userData.name}</h2>
@@ -186,7 +186,7 @@ export default function Dashboard() {
 
       <div className="pad-screen dashboard-grid spacing-lg">
         {/* Environment Alert */}
-        <div className="glass-panel alert-card skin-alert">
+        <div className="glass-panel alert-card skin-alert slide-up" style={{ animationDelay: '0.1s' }}>
           <div className={`alert-icon-wrapper ${isHighUV ? 'uv-alert' : 'uv-safe'}`}>
             {isHighUV ? <Sun size={28} color="#fff" /> : <Moon size={28} color="#fff" />}
           </div>
@@ -208,7 +208,7 @@ export default function Dashboard() {
         </div>
 
         {/* Daily Skincare Routine */}
-        <section className="dashboard-section stack-y">
+        <section className="dashboard-section stack-y slide-up" style={{ animationDelay: '0.2s' }}>
           <div className="section-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <h3>{isNight ? 'Night Routine' : 'Morning Routine'}</h3>
@@ -235,7 +235,7 @@ export default function Dashboard() {
         </section>
 
         {/* Diet & Health Tracking */}
-        <section className="dashboard-section stack-y">
+        <section className="dashboard-section stack-y slide-up" style={{ animationDelay: '0.3s' }}>
           <div className="section-header">
             <h3>Diet Insights</h3>
           </div>
@@ -250,7 +250,7 @@ export default function Dashboard() {
           </div>
         </section>
         {/* Suggested Products */}
-        <section className="dashboard-section stack-y" style={{ gridColumn: '1 / -1' }}>
+        <section className="dashboard-section stack-y slide-up" style={{ gridColumn: '1 / -1', animationDelay: '0.4s' }}>
           <div className="section-header">
             <h3>Suggested For You</h3>
             <span className="progress-text" style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: 400 }}>Based on {userData.skinType === 'Unknown' ? 'General' : userData.skinType} skin</span>

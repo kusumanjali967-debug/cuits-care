@@ -41,8 +41,8 @@ export default function Onboarding() {
 
   return (
     <div className="onboarding-container pad-screen fade-in">
-      <div className="onboarding-header">
-        <button className="icon-btn" onClick={handleBack} aria-label="Go back">
+      <div className="onboarding-header slide-up">
+        <button className="icon-btn hover-lift" onClick={handleBack} aria-label="Go back">
           <ArrowLeft size={24} />
         </button>
         <div className="progress-bar">
@@ -52,15 +52,15 @@ export default function Onboarding() {
 
       <div className="onboarding-content stack-y">
         {step === 1 && (
-          <div className="step-card fade-in">
-            <h2>Let's get to know your skin</h2>
+          <div className="step-card slide-up" style={{ animationDelay: '0.1s' }}>
+            <h2 className="text-gradient">Let's get to know your skin</h2>
             <p>Do you already know your skin type?</p>
             
             <div className="options-grid">
-              <button className="option-btn glass-panel" onClick={() => { setKnowsSkinType(true); handleNext(); }}>
+              <button className="option-btn glass-panel hover-lift" onClick={() => { setKnowsSkinType(true); handleNext(); }}>
                 Yes, I know it
               </button>
-              <button className="option-btn glass-panel" onClick={() => { setKnowsSkinType(false); handleNext(); }}>
+              <button className="option-btn glass-panel hover-lift" onClick={() => { setKnowsSkinType(false); handleNext(); }}>
                 No, help me figure it out
               </button>
             </div>
@@ -68,32 +68,32 @@ export default function Onboarding() {
         )}
 
         {step === 2 && knowsSkinType === true && (
-          <div className="step-card fade-in">
-            <h2>What is your skin type?</h2>
+          <div className="step-card slide-up" style={{ animationDelay: '0.1s' }}>
+            <h2 className="text-gradient">What is your skin type?</h2>
             <div className="options-grid stack-y">
-              <button className="option-btn glass-panel" onClick={() => selectSkinType("Dry")}>Dry</button>
-              <button className="option-btn glass-panel" onClick={() => selectSkinType("Oily")}>Oily</button>
-              <button className="option-btn glass-panel" onClick={() => selectSkinType("Combination")}>Combination</button>
-              <button className="option-btn glass-panel" onClick={() => selectSkinType("Normal")}>Normal</button>
+              <button className="option-btn glass-panel hover-lift" onClick={() => selectSkinType("Dry")}>Dry</button>
+              <button className="option-btn glass-panel hover-lift" onClick={() => selectSkinType("Oily")}>Oily</button>
+              <button className="option-btn glass-panel hover-lift" onClick={() => selectSkinType("Combination")}>Combination</button>
+              <button className="option-btn glass-panel hover-lift" onClick={() => selectSkinType("Normal")}>Normal</button>
             </div>
           </div>
         )}
 
         {step === 2 && knowsSkinType === false && (
-          <div className="step-card fade-in">
-            <h2>How does your skin feel midday?</h2>
+          <div className="step-card slide-up" style={{ animationDelay: '0.1s' }}>
+            <h2 className="text-gradient">How does your skin feel midday?</h2>
             <div className="options-grid stack-y">
-              <button className="option-btn glass-panel" onClick={() => selectSkinType("Dry")}>Tight and flaky</button>
-              <button className="option-btn glass-panel" onClick={() => selectSkinType("Oily")}>Shiny all over</button>
-              <button className="option-btn glass-panel" onClick={() => selectSkinType("Combination")}>Shiny only on nose/forehead</button>
-              <button className="option-btn glass-panel" onClick={() => selectSkinType("Normal")}>Comfortable, not too shiny or dry</button>
+              <button className="option-btn glass-panel hover-lift" onClick={() => selectSkinType("Dry")}>Tight and flaky</button>
+              <button className="option-btn glass-panel hover-lift" onClick={() => selectSkinType("Oily")}>Shiny all over</button>
+              <button className="option-btn glass-panel hover-lift" onClick={() => selectSkinType("Combination")}>Shiny only on nose/forehead</button>
+              <button className="option-btn glass-panel hover-lift" onClick={() => selectSkinType("Normal")}>Comfortable, not too shiny or dry</button>
             </div>
           </div>
         )}
 
         {step === 3 && (
-          <div className="step-card fade-in">
-            <h2>Any specific skin issues?</h2>
+          <div className="step-card slide-up" style={{ animationDelay: '0.1s' }}>
+            <h2 className="text-gradient">Any specific skin issues?</h2>
             <p>Select all that apply</p>
             <div className="tags-container">
               {COMMON_ISSUES.map(issue => {
@@ -101,12 +101,13 @@ export default function Onboarding() {
                 return (
                   <button 
                     key={issue} 
-                    className="tag-btn glass-panel"
+                    className="tag-btn glass-panel hover-lift"
                     onClick={() => toggleIssue(issue)}
                     style={{
-                      backgroundColor: isActive ? 'var(--accent)' : 'transparent',
+                      background: isActive ? 'var(--accent-gradient)' : 'var(--glass-bg)',
                       color: isActive ? '#fff' : 'var(--text-primary)',
-                      borderColor: isActive ? 'var(--accent)' : 'var(--glass-border)'
+                      borderColor: isActive ? 'transparent' : 'var(--glass-border)',
+                      fontWeight: isActive ? 600 : 500
                     }}
                   >
                     {issue}
@@ -115,8 +116,8 @@ export default function Onboarding() {
               })}
             </div>
             
-            <button className="btn-primary" style={{ marginTop: '32px' }} onClick={finishOnboarding}>
-              Complete Profile <ArrowRight size={20} />
+            <button className="btn-primary hover-lift" style={{ marginTop: '32px' }} onClick={finishOnboarding}>
+              <span>Complete Profile</span> <ArrowRight size={20} />
             </button>
           </div>
         )}

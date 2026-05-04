@@ -15,26 +15,32 @@
   position: relative;
   background: var(--bg-secondary);
   box-shadow: var(--card-shadow);
+  transition: var(--transition);
+}
+.notif-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--card-shadow-hover);
 }
 .notif-badge {
   position: absolute;
-  top: 0;
-  right: 0;
+  top: -4px;
+  right: -4px;
   background-color: var(--danger);
   color: #fff;
-  font-size: 0.6rem;
+  font-size: 0.7rem;
   font-weight: bold;
-  width: 16px;
-  height: 16px;
+  width: 18px;
+  height: 18px;
   border-radius: 50%;
   display: flex;
   justify-content: center;
   align-items: center;
+  animation: pulse 2s infinite ease-in-out;
 }
 .alert-card {
   display: flex;
-  padding: 20px;
-  gap: 16px;
+  padding: 24px;
+  gap: 20px;
   align-items: flex-start;
   background: linear-gradient(135deg, rgba(216,140,125,0.1) 0%, rgba(216,140,125,0.05) 100%);
   border: 1px solid rgba(216,140,125,0.3);
@@ -49,129 +55,147 @@
 
 .alert-icon-wrapper {
   flex-shrink: 0;
-  width: 48px;
-  height: 48px;
-  border-radius: 12px;
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 .uv-alert {
-  background: linear-gradient(135deg, #f2994a 0%, #f2c94c 100%);
-  box-shadow: 0 4px 12px rgba(242, 153, 74, 0.4);
+  background: linear-gradient(135deg, #ff9966 0%, #ff5e62 100%);
+  box-shadow: 0 8px 16px rgba(255, 94, 98, 0.3);
 }
 .uv-safe {
   background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
-  box-shadow: 0 4px 12px rgba(37, 117, 252, 0.4);
+  box-shadow: 0 8px 16px rgba(37, 117, 252, 0.3);
 }
 .water-bg {
   background: linear-gradient(135deg, #56ccf2 0%, #2f80ed 100%);
-  box-shadow: 0 4px 12px rgba(47, 128, 237, 0.4);
+  box-shadow: 0 8px 16px rgba(47, 128, 237, 0.3);
 }
 .alert-content h3 {
-  font-size: 1rem;
-  margin-bottom: 4px;
+  font-size: 1.1rem;
+  margin-bottom: 8px;
 }
 .alert-content p {
-  font-size: 0.875rem;
+  font-size: 0.95rem;
+  line-height: 1.5;
 }
 .section-header {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
-  margin-bottom: 8px;
+  margin-bottom: 12px;
 }
 .progress-text {
-  font-size: 0.875rem;
-  font-weight: 600;
+  font-size: 0.9rem;
+  font-weight: 700;
   color: var(--accent);
 }
 .routine-list {
-  gap: 12px;
+  gap: 16px;
 }
 .routine-item {
   display: flex;
   align-items: center;
-  padding: 16px;
+  padding: 18px 20px;
   gap: 16px;
   cursor: pointer;
   transition: var(--transition);
+  font-weight: 500;
 }
 .routine-item:hover {
-  transform: translateX(4px);
+  transform: translateX(6px) scale(1.01);
+  box-shadow: var(--card-shadow-hover);
+  background: var(--bg-secondary);
 }
 .routine-item.checked {
-  opacity: 0.7;
+  opacity: 0.6;
 }
 .routine-item.checked span {
   text-decoration: line-through;
+  color: var(--text-secondary);
 }
 .checkbox-empty {
   display: block;
-  width: 20px;
-  height: 20px;
+  width: 22px;
+  height: 22px;
   border: 2px solid var(--text-secondary);
   border-radius: 50%;
+  transition: var(--transition);
+}
+.routine-item:hover .checkbox-empty {
+  border-color: var(--accent);
 }
 .insight-card {
-  padding: 20px;
+  padding: 24px;
 }
 .insight-header {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 12px;
+  gap: 16px;
+  margin-bottom: 16px;
 }
 
 .products-carousel {
   display: flex;
-  gap: 16px;
+  gap: 20px;
   overflow-x: auto;
-  padding-bottom: 8px;
+  padding-bottom: 16px;
   scrollbar-width: none;
 }
 .products-carousel::-webkit-scrollbar {
   display: none;
 }
 .product-card {
-  min-width: 140px;
-  max-width: 160px;
+  min-width: 150px;
+  max-width: 180px;
   display: flex;
   flex-direction: column;
-  padding: 12px;
+  padding: 16px;
 }
 .product-img-wrapper {
   width: 100%;
-  height: 120px;
+  height: 140px;
   border-radius: 12px;
   overflow: hidden;
-  margin-bottom: 12px;
-  background: var(--bg-tertiary);
+  margin-bottom: 16px;
+  background: var(--bg-primary);
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 .product-img-wrapper img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
+  mix-blend-mode: multiply;
+}
+@media (prefers-color-scheme: dark) {
+  .product-img-wrapper img {
+    mix-blend-mode: normal;
+  }
 }
 .product-info h5 {
-  margin: 0 0 4px 0;
-  font-size: 0.85rem;
+  margin: 0 0 6px 0;
+  font-size: 0.95rem;
   color: var(--text-primary);
   line-height: 1.3;
 }
 .product-info .product-type {
-  font-size: 0.75rem;
+  font-size: 0.8rem;
   color: var(--text-secondary);
   display: block;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
 }
 .product-rating {
-  font-size: 0.8rem;
-  font-weight: 600;
+  font-size: 0.85rem;
+  font-weight: 700;
   color: var(--accent);
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
 }
 
 /* Toast Notifications */
@@ -189,20 +213,20 @@
 .toast-message {
   background: var(--bg-secondary);
   border: 1px solid var(--accent);
-  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-  padding: 12px 20px;
-  border-radius: 8px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+  padding: 16px 24px;
+  border-radius: 12px;
   display: flex;
   align-items: center;
-  gap: 12px;
-  font-size: 0.9rem;
-  font-weight: 500;
+  gap: 16px;
+  font-size: 1rem;
+  font-weight: 600;
   color: var(--text-primary);
-  animation: slideDownToast 0.4s ease-out forwards, fadeOutToast 3s ease-in 3.5s forwards;
+  animation: slideDownToast 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards, fadeOutToast 3s ease-in 3.5s forwards;
 }
 
 @keyframes slideDownToast {
-  0% { opacity: 0; transform: translateY(-20px); }
+  0% { opacity: 0; transform: translateY(-30px); }
   100% { opacity: 1; transform: translateY(0); }
 }
 @keyframes fadeOutToast {
@@ -211,19 +235,20 @@
 
 .env-details {
   display: flex;
-  gap: 8px;
-  font-size: 0.8rem;
+  gap: 12px;
+  font-size: 0.85rem;
   color: #fff;
   opacity: 0.9;
-  margin-top: 4px;
+  margin-top: 8px;
 }
 .env-badge {
-  background: rgba(0,0,0,0.2);
-  padding: 4px 8px;
-  border-radius: 4px;
+  background: rgba(0,0,0,0.25);
+  padding: 6px 12px;
+  border-radius: 6px;
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
+  backdrop-filter: blur(4px);
 }
 
 @media (min-width: 768px) {

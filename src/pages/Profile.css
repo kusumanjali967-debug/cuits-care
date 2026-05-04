@@ -5,71 +5,95 @@
 .profile-card {
   display: flex;
   align-items: center;
-  padding: 24px;
-  gap: 16px;
+  padding: 28px;
+  gap: 20px;
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+}
+@media (prefers-color-scheme: dark) {
+  .profile-card {
+    border: 1px solid rgba(255, 255, 255, 0.05);
+  }
 }
 .profile-avatar {
-  background-color: var(--accent);
-  width: 64px;
-  height: 64px;
+  background: var(--accent-gradient);
+  width: 72px;
+  height: 72px;
   border-radius: 50%;
   display: flex;
   justify-content: center;
   align-items: center;
+  box-shadow: 0 8px 24px rgba(216, 140, 125, 0.4);
 }
 .profile-info h3 {
-  margin-bottom: 4px;
+  margin-bottom: 6px;
+  font-size: 1.4rem;
 }
 .skin-type-badge {
   background-color: var(--accent-light);
   color: var(--accent);
-  padding: 4px 12px;
-  border-radius: 12px;
-  font-size: 0.75rem;
-  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: 16px;
+  font-size: 0.8rem;
+  font-weight: 700;
   display: inline-block;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.02);
 }
 
 @media (prefers-color-scheme: dark) {
   .skin-type-badge {
-    background-color: var(--accent-light);
-    color: #fff;
+    background-color: rgba(226,161,149,0.15);
+    color: var(--accent);
   }
 }
 
 .profile-menu {
-  gap: 12px;
+  gap: 16px;
 }
 .menu-item {
   width: 100%;
   text-align: left;
   border: none;
-  padding: 16px;
+  padding: 18px 20px;
   display: flex;
   align-items: center;
-  gap: 16px;
-  font-size: 1rem;
-  font-weight: 500;
+  gap: 18px;
+  font-size: 1.05rem;
+  font-weight: 600;
   color: var(--text-primary);
   cursor: pointer;
   transition: var(--transition);
+  border-radius: var(--radius-md);
+  border: 1px solid transparent;
 }
 .menu-item:hover {
-  transform: scale(1.02);
+  transform: translateX(4px) scale(1.01);
+  box-shadow: var(--card-shadow-hover);
+  border: 1px solid rgba(255,255,255,0.2);
 }
 .menu-icon-wrapper {
   background: var(--bg-primary);
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   color: var(--text-secondary);
+  transition: var(--transition);
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+}
+.menu-item:hover .menu-icon-wrapper {
+  color: var(--accent);
+  box-shadow: inset 0 2px 4px rgba(216,140,125,0.1);
 }
 .menu-icon-wrapper.danger-bg {
   background: rgba(207, 102, 121, 0.1);
   color: var(--danger);
+}
+.item-danger:hover .menu-icon-wrapper.danger-bg {
+  color: #fff;
+  background: var(--danger);
 }
 .item-danger span {
   color: var(--danger);

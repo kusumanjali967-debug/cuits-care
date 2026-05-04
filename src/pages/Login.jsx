@@ -26,15 +26,15 @@ export default function Login() {
 
   return (
     <div className="login-container pad-screen fade-in">
-      <div className="login-header spacing-lg">
-        <button className="icon-btn" onClick={() => navigate(-1)} aria-label="Go back">
+      <div className="login-header spacing-lg slide-up" style={{ animationDelay: '0.1s' }}>
+        <button className="icon-btn hover-lift" onClick={() => navigate(-1)} aria-label="Go back">
           <ArrowLeft size={24} />
         </button>
-        <h2>Welcome Back</h2>
+        <h2 className="text-gradient">Welcome Back</h2>
         <p>Log in to Cuits Care</p>
       </div>
 
-      <form className="glass-panel login-form pad-screen stack-y" onSubmit={handleLogin}>
+      <form className="glass-panel login-form pad-screen stack-y slide-up hover-lift" style={{ animationDelay: '0.2s' }} onSubmit={handleLogin}>
         <div className="input-group">
           <label>Email Address</label>
           <div className="input-wrapper">
@@ -55,13 +55,13 @@ export default function Login() {
           <a href="#">Forgot password?</a>
         </div>
 
-        <button type="submit" className="btn-primary" style={{ marginTop: '16px' }}>
-          Log In
+        <button type="submit" className="btn-primary hover-lift" style={{ marginTop: '16px' }}>
+          <span>Log In</span>
         </button>
       </form>
 
-      <div className="login-footer">
-        <p>Don't have an account? <span onClick={() => navigate('/onboarding')} className="text-accent">Sign up</span></p>
+      <div className="login-footer slide-up" style={{ animationDelay: '0.3s' }}>
+        <p>Don't have an account? <span onClick={() => navigate('/onboarding')} className="text-accent hover-lift" style={{display: 'inline-block'}}>Sign up</span></p>
       </div>
     </div>
   );
