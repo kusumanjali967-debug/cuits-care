@@ -11,9 +11,9 @@ export default function SplashPage() {
         <div className="logo-wrapper scale-in pulse-slow">
           <Sparkles size={48} color="var(--bg-primary)" />
         </div>
-        <h1 className="splash-title slide-up text-gradient" style={{ animationDelay: '0.2s' }}>Cuits Care</h1>
+        <h1 className="splash-title slide-up text-gradient" style={{ animationDelay: '0.2s' }}>CUTISCARE</h1>
         <p className="splash-subtitle slide-up" style={{ animationDelay: '0.3s' }}>
-          Personalized skin health and daily routine companion.
+          ADAPTIVE DERMATOLOGICAL PREVENTION PLATFORM
         </p>
       </div>
       

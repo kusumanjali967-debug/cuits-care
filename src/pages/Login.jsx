@@ -31,7 +31,7 @@ export default function Login() {
           <ArrowLeft size={24} />
         </button>
         <h2 className="text-gradient">Welcome Back</h2>
-        <p>Log in to Cuits Care</p>
+        <p>Log in to CutisCare</p>
       </div>
 
       <form className="glass-panel login-form pad-screen stack-y slide-up hover-lift" style={{ animationDelay: '0.2s' }} onSubmit={handleLogin}>

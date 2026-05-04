@@ -1,7 +1,7 @@
 {
   "name": "cuits-care-backend",
   "version": "1.0.0",
-  "description": "Backend API for Cuits Care",
+  "description": "Backend API for CutisCare",
   "main": "server.js",
   "type": "module",
   "scripts": {
