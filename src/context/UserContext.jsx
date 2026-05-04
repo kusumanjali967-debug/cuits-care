@@ -29,9 +29,15 @@ export const UserProvider = ({ children }) => {
           if (res.ok) {
             const data = await res.json();
             setUserData(data);
+          } else {
+            throw new Error("Backend offline");
           }
         } catch (error) {
-          console.error("Failed to load user from DB:", error);
+          console.warn("Backend offline, loading from local storage");
+          const localData = localStorage.getItem(`cuitsCare_${savedEmail}`);
+          if (localData) {
+            setUserData(JSON.parse(localData));
+          }
         }
       }
       setLoading(false);
@@ -59,24 +65,47 @@ export const UserProvider = ({ children }) => {
           const data = await postRes.json();
           setUserData(data);
           return { user: data, isNew: true };
+        } else {
+          throw new Error("Backend offline");
         }
       }
     } catch (error) {
-      console.error("Login failed", error);
+      console.warn("Backend offline, falling back to local storage");
+      const localData = localStorage.getItem(`cuitsCare_${email}`);
+      if (localData) {
+        const parsed = JSON.parse(localData);
+        setUserData(parsed);
+        return { user: parsed, isNew: false };
+      } else {
+        const newUserData = { 
+          email, 
+          name: email.split('@')[0],
+          skinType: "Unknown",
+          skinIssues: [],
+          currentProducts: [],
+          morningRoutine: [],
+          nightRoutine: [],
+          history: []
+        };
+        localStorage.setItem(`cuitsCare_${email}`, JSON.stringify(newUserData));
+        setUserData(newUserData);
+        return { user: newUserData, isNew: true };
+      }
     }
-    return null;
   };
 
   const syncToDB = async (newData) => {
     if (!newData.email) return;
     try {
-      await fetch('/api/user', {
+      const res = await fetch('/api/user', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newData)
       });
+      if (!res.ok) throw new Error("Backend offline");
     } catch (err) {
-      console.error("Failed to sync to DB", err);
+      console.warn("Backend offline, saving to local storage");
+      localStorage.setItem(`cuitsCare_${newData.email}`, JSON.stringify(newData));
     }
   };
 
