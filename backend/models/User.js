@@ -26,6 +26,10 @@ const userSchema = new mongoose.Schema({
     type: Array,
     default: []
   },
+  nightRoutine: {
+    type: Array,
+    default: []
+  },
   score: {
     type: Number,
     default: 0

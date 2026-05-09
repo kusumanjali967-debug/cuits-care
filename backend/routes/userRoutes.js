@@ -1,39 +1,14 @@
 import express from "express";
-import fs from "fs/promises";
-import path from "path";
-import { fileURLToPath } from 'url';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const DB_PATH = path.join(__dirname, "../database.json");
+import User from "../models/User.js";
 
 const router = express.Router();
-
-// Helper to interact with json db
-const getDB = async () => {
-  try {
-    const data = await fs.readFile(DB_PATH, "utf-8");
-    return JSON.parse(data);
-  } catch (err) {
-    if (err.code === "ENOENT") {
-      await fs.writeFile(DB_PATH, JSON.stringify({ users: [] }));
-      return { users: [] };
-    }
-    throw err;
-  }
-};
-
-const saveDB = async (data) => {
-  await fs.writeFile(DB_PATH, JSON.stringify(data, null, 2));
-};
 
 // =====================
 // GET USER BY EMAIL
 // =====================
 router.get("/:email", async (req, res) => {
   try {
-    const db = await getDB();
-    const user = db.users.find(u => u.email === req.params.email);
+    const user = await User.findOne({ email: req.params.email });
     
     if (!user) {
       return res.status(404).json({ success: false, message: "User not found" });
@@ -52,17 +27,15 @@ router.post("/", async (req, res) => {
     const { email } = req.body;
     if (!email) return res.status(400).json({ success: false, message: "Email required" });
 
-    const db = await getDB();
-    const index = db.users.findIndex(u => u.email === email);
+    let user = await User.findOne({ email });
 
-    let user;
-    if (index !== -1) {
+    if (user) {
       // Update existing
-      user = { ...db.users[index], ...req.body };
-      db.users[index] = user;
+      Object.assign(user, req.body);
+      await user.save();
     } else {
       // Create new
-      user = { 
+      user = new User({
         skinType: "Unknown", 
         skinIssues: [], 
         currentProducts: [], 
@@ -71,11 +44,10 @@ router.post("/", async (req, res) => {
         score: 0, 
         history: [], 
         ...req.body 
-      };
-      db.users.push(user);
+      });
+      await user.save();
     }
     
-    await saveDB(db);
     res.json(user);
   } catch (error) {
     res.status(500).json({ message: 'Server error', error: error.message });
