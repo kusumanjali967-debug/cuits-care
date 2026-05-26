@@ -99,11 +99,18 @@ export default function CameraAnalysis() {
           "Mild Dehydration": "Low moisture levels detected across the U-zone. Epidermis appears dry."
         };
 
+        const generatedScore = Math.floor(Math.random() * 12) + 85; // 85% to 96%
+        const generatedUndertone = skinType === "Sensitive" || skinType === "Oily" ? "Cool" : skinType !== "Unknown" ? "Warm" : "Neutral";
+        const generatedPalette = skinType === "Sensitive" ? "Cool Summer" : skinType === "Oily" ? "Cool Winter" : skinType === "Dry" ? "Warm Autumn" : skinType === "Combination" ? "Warm Spring" : "Warm Autumn";
+
         setResults({
           issue: targetedIssue,
           description: recDesc[targetedIssue] || recDesc["Mild Dehydration"],
           recommendation: getPersonalizedProduct(targetedIssue, skinType),
           confidence: Math.floor(Math.random() * 15) + 84, // 84-98%
+          score: generatedScore,
+          undertone: generatedUndertone,
+          seasonalPalette: generatedPalette,
           saved: false
         });
       }, 3000);
@@ -120,6 +127,9 @@ export default function CameraAnalysis() {
     if (!results || results.saved) return;
     
     updateUserData({
+      score: results.score,
+      undertone: results.undertone,
+      seasonalPalette: results.seasonalPalette,
       currentProducts: [
         ...(userData.currentProducts || []),
         { id: Date.now(), name: results.recommendation }
@@ -199,6 +209,17 @@ export default function CameraAnalysis() {
                   </div>
                 </div>
                 <p>{results.description}</p>
+                <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginTop: '12px', borderTop: '1px solid var(--glass-border)', paddingTop: '12px' }}>
+                  <span style={{ background: 'var(--accent-light)', color: 'var(--accent)', fontSize: '0.75rem', fontWeight: 700, padding: '4px 8px', borderRadius: '8px' }}>
+                    Skin Vitals: {results.score}%
+                  </span>
+                  <span style={{ background: 'var(--glass-bg)', color: 'var(--text-primary)', fontSize: '0.75rem', fontWeight: 600, border: '1px solid var(--glass-border)', padding: '4px 8px', borderRadius: '8px' }}>
+                    {results.undertone} Undertone
+                  </span>
+                  <span style={{ background: 'var(--glass-bg)', color: 'var(--text-primary)', fontSize: '0.75rem', fontWeight: 600, border: '1px solid var(--glass-border)', padding: '4px 8px', borderRadius: '8px' }}>
+                    {results.seasonalPalette}
+                  </span>
+                </div>
               </div>
 
               <div className="glass-panel recommendation-box stack-y">

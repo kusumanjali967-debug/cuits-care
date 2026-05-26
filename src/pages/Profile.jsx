@@ -114,7 +114,19 @@ export default function Profile() {
             </div>
             <div className="profile-info">
               <h3>{userData.name}</h3>
-              <span className="skin-type-badge">Skin Type: {userData.skinType}</span>
+              <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginTop: '8px' }}>
+                <span className="skin-type-badge" style={{ margin: 0 }}>Skin: {userData.skinType}</span>
+                {userData.score > 0 && (
+                  <>
+                    <span className="skin-type-badge" style={{ margin: 0, background: 'var(--accent-light)', color: 'var(--accent)', fontWeight: 750 }}>
+                      Vitals: {userData.score}%
+                    </span>
+                    <span className="skin-type-badge" style={{ margin: 0, background: 'rgba(0,0,0,0.06)', border: '1px solid var(--glass-border)', fontWeight: 650 }}>
+                      {userData.seasonalPalette}
+                    </span>
+                  </>
+                )}
+              </div>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '12px' }}>
                 {(userData.skinIssues || []).map(issue => (
                   <span key={issue} style={{ fontSize: '0.75rem', background: 'var(--glass-bg)', padding: '6px 12px', borderRadius: '12px', fontWeight: 500 }}>{issue}</span>

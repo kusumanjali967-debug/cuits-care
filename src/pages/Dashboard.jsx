@@ -118,7 +118,11 @@ export default function Dashboard() {
     return "Maintain a balanced diet rich in antioxidants today to keep your skin in its best shape.";
   };
 
-  const dietInsight = getDietInsight(userData.skinIssues, userData.skinType);
+  const dietInsight = getDietInsight(userData.skinIssues || [], userData.skinType);
+
+  const score = userData.score || (userData.skinType && userData.skinType !== 'Unknown' ? 84 : 0);
+  const undertone = userData.undertone || (userData.skinType === 'Sensitive' || userData.skinType === 'Oily' ? 'Cool' : userData.skinType && userData.skinType !== 'Unknown' ? 'Warm' : 'Unknown');
+  const seasonalPalette = userData.seasonalPalette || (userData.skinType === 'Sensitive' ? 'Cool Summer' : userData.skinType === 'Oily' ? 'Cool Winter' : userData.skinType === 'Dry' ? 'Warm Autumn' : userData.skinType === 'Combination' ? 'Warm Spring' : userData.skinType && userData.skinType !== 'Unknown' ? 'Warm Autumn' : 'Unknown');
 
   const getProductSuggestions = (skinType, issues = []) => {
     let products = [];
@@ -206,6 +210,95 @@ export default function Dashboard() {
             </div>
           </div>
         </div>
+
+        {/* Skin Health & Personal Color Styling */}
+        {score > 0 && (
+          <div className="glass-panel slide-up alert-card skin-alert" style={{ gridColumn: '1 / -1', flexDirection: 'column', gap: '16px', padding: '24px', animationDelay: '0.15s' }}>
+            <h3 style={{ margin: 0, fontSize: '1.15rem', display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+              <span>AI Skin Health & Styling</span>
+              <span style={{ fontSize: '0.8rem', opacity: 0.8 }}>Seasonal Color Palette</span>
+            </h3>
+            
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px', alignItems: 'center', width: '100%' }}>
+              {/* Circular SVG Ring */}
+              <div style={{ position: 'relative', width: '80px', height: '80px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <svg style={{ width: '80px', height: '80px', transform: 'rotate(-90deg)' }}>
+                  <circle cx="40" cy="40" r="34" stroke="var(--glass-border)" strokeWidth="6" fill="transparent" style={{ opacity: 0.3 }} />
+                  <circle cx="40" cy="40" r="34" stroke="var(--accent)" strokeWidth="6" fill="transparent" 
+                    strokeDasharray={`${2 * Math.PI * 34}`} 
+                    strokeDashoffset={`${2 * Math.PI * 34 * (1 - score / 100)}`}
+                    strokeLinecap="round"
+                    style={{ transition: 'stroke-dashoffset 1s ease-in-out' }}
+                  />
+                </svg>
+                <span style={{ position: 'absolute', fontSize: '1.25rem', fontWeight: 700, color: 'var(--text-primary)' }}>{score}%</span>
+              </div>
+
+              {/* Badges & Description */}
+              <div style={{ flex: 1, minWidth: '180px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+                  <span className="env-badge" style={{ background: 'var(--accent-light)', color: 'var(--accent)', fontSize: '0.75rem', fontWeight: 750, padding: '4px 8px', borderRadius: '8px' }}>
+                    {undertone} Undertone
+                  </span>
+                  <span className="env-badge" style={{ background: 'rgba(0,0,0,0.06)', color: 'var(--text-primary)', fontSize: '0.75rem', fontWeight: 650, padding: '4px 8px', border: '1px solid var(--glass-border)', borderRadius: '8px' }}>
+                    {seasonalPalette}
+                  </span>
+                </div>
+                <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', margin: 0, lineHeight: 1.45 }}>
+                  {seasonalPalette === 'Warm Autumn' && "Rich, earthy shades bring out your warm undertones. Your best matches are terracotta, warm olives, and deep chocolate."}
+                  {seasonalPalette === 'Cool Winter' && "Vibrant jewel tones look stunning against your cool undertones. Flatter yourself with royal sapphire, emerald, and magenta."}
+                  {seasonalPalette === 'Cool Summer' && "Soft, muted pastels frame your cool undertones beautifully. Opt for delicate lavender, dusty rose, and calm sage greens."}
+                  {seasonalPalette === 'Warm Spring' && "Bright, lively clear colors emphasize your sunny warm undertones. Enhance your glow with peach, warm coral, and golden yellow."}
+                </p>
+              </div>
+            </div>
+
+            {/* Colors Swatch */}
+            <div style={{ width: '100%', borderTop: '1px solid var(--glass-border)', paddingTop: '16px', marginTop: '4px' }}>
+              <h5 style={{ fontSize: '0.75rem', textTransform: 'uppercase', color: 'var(--text-secondary)', letterSpacing: '0.05em', marginBottom: '10px', fontWeight: 700 }}>
+                Your Best Styling Colors
+              </h5>
+              <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+                {seasonalPalette === 'Warm Autumn' && (
+                  <>
+                    <div style={{ width: '32px', height: '32px', borderRadius: '50%', backgroundColor: '#c05a46', border: '1px solid rgba(255,255,255,0.4)', boxShadow: '0 2px 6px rgba(0,0,0,0.1)' }} title="Terracotta"></div>
+                    <div style={{ width: '32px', height: '32px', borderRadius: '50%', backgroundColor: '#606c38', border: '1px solid rgba(255,255,255,0.4)', boxShadow: '0 2px 6px rgba(0,0,0,0.1)' }} title="Olive Green"></div>
+                    <div style={{ width: '32px', height: '32px', borderRadius: '50%', backgroundColor: '#dda15e', border: '1px solid rgba(255,255,255,0.4)', boxShadow: '0 2px 6px rgba(0,0,0,0.1)' }} title="Mustard Gold"></div>
+                    <div style={{ width: '32px', height: '32px', borderRadius: '50%', backgroundColor: '#5c3d2e', border: '1px solid rgba(255,255,255,0.4)', boxShadow: '0 2px 6px rgba(0,0,0,0.1)' }} title="Chocolate Brown"></div>
+                    <div style={{ width: '32px', height: '32px', borderRadius: '50%', backgroundColor: '#ae6378', border: '1px solid rgba(255,255,255,0.4)', boxShadow: '0 2px 6px rgba(0,0,0,0.1)' }} title="Warm Rose"></div>
+                  </>
+                )}
+                {seasonalPalette === 'Cool Winter' && (
+                  <>
+                    <div style={{ width: '32px', height: '32px', borderRadius: '50%', backgroundColor: '#1d3557', border: '1px solid rgba(255,255,255,0.4)', boxShadow: '0 2px 6px rgba(0,0,0,0.1)' }} title="Sapphire Blue"></div>
+                    <div style={{ width: '32px', height: '32px', borderRadius: '50%', backgroundColor: '#0f4c5c', border: '1px solid rgba(255,255,255,0.4)', boxShadow: '0 2px 6px rgba(0,0,0,0.1)' }} title="Emerald Green"></div>
+                    <div style={{ width: '32px', height: '32px', borderRadius: '50%', backgroundColor: '#8338ec', border: '1px solid rgba(255,255,255,0.4)', boxShadow: '0 2px 6px rgba(0,0,0,0.1)' }} title="Royal Purple"></div>
+                    <div style={{ width: '32px', height: '32px', borderRadius: '50%', backgroundColor: '#e63946', border: '1px solid rgba(255,255,255,0.4)', boxShadow: '0 2px 6px rgba(0,0,0,0.1)' }} title="Ruby Red"></div>
+                    <div style={{ width: '32px', height: '32px', borderRadius: '50%', backgroundColor: '#ff006e', border: '1px solid rgba(255,255,255,0.4)', boxShadow: '0 2px 6px rgba(0,0,0,0.1)' }} title="Magenta"></div>
+                  </>
+                )}
+                {seasonalPalette === 'Cool Summer' && (
+                  <>
+                    <div style={{ width: '32px', height: '32px', borderRadius: '50%', backgroundColor: '#b3c5d7', border: '1px solid rgba(255,255,255,0.4)', boxShadow: '0 2px 6px rgba(0,0,0,0.1)' }} title="Soft Slate"></div>
+                    <div style={{ width: '32px', height: '32px', borderRadius: '50%', backgroundColor: '#95d5b2', border: '1px solid rgba(255,255,255,0.4)', boxShadow: '0 2px 6px rgba(0,0,0,0.1)' }} title="Sage Green"></div>
+                    <div style={{ width: '32px', height: '32px', borderRadius: '50%', backgroundColor: '#cdb4db', border: '1px solid rgba(255,255,255,0.4)', boxShadow: '0 2px 6px rgba(0,0,0,0.1)' }} title="Soft Lavender"></div>
+                    <div style={{ width: '32px', height: '32px', borderRadius: '50%', backgroundColor: '#ffafcc', border: '1px solid rgba(255,255,255,0.4)', boxShadow: '0 2px 6px rgba(0,0,0,0.1)' }} title="Dusty Rose"></div>
+                    <div style={{ width: '32px', height: '32px', borderRadius: '50%', backgroundColor: '#a8dadc', border: '1px solid rgba(255,255,255,0.4)', boxShadow: '0 2px 6px rgba(0,0,0,0.1)' }} title="Soft Teal"></div>
+                  </>
+                )}
+                {seasonalPalette === 'Warm Spring' && (
+                  <>
+                    <div style={{ width: '32px', height: '32px', borderRadius: '50%', backgroundColor: '#f2a65a', border: '1px solid rgba(255,255,255,0.4)', boxShadow: '0 2px 6px rgba(0,0,0,0.1)' }} title="Peach Orange"></div>
+                    <div style={{ width: '32px', height: '32px', borderRadius: '50%', backgroundColor: '#f4a261', border: '1px solid rgba(255,255,255,0.4)', boxShadow: '0 2px 6px rgba(0,0,0,0.1)' }} title="Warm Coral"></div>
+                    <div style={{ width: '32px', height: '32px', borderRadius: '50%', backgroundColor: '#e9c46a', border: '1px solid rgba(255,255,255,0.4)', boxShadow: '0 2px 6px rgba(0,0,0,0.1)' }} title="Golden Yellow"></div>
+                    <div style={{ width: '32px', height: '32px', borderRadius: '50%', backgroundColor: '#2a9d8f', border: '1px solid rgba(255,255,255,0.4)', boxShadow: '0 2px 6px rgba(0,0,0,0.1)' }} title="Mint Teal"></div>
+                    <div style={{ width: '32px', height: '32px', borderRadius: '50%', backgroundColor: '#f7d1cd', border: '1px solid rgba(255,255,255,0.4)', boxShadow: '0 2px 6px rgba(0,0,0,0.1)' }} title="Soft Cream"></div>
+                  </>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Daily Skincare Routine */}
         <section className="dashboard-section stack-y slide-up" style={{ animationDelay: '0.2s' }}>
