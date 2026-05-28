@@ -9,6 +9,9 @@ import MySkinIssues from './pages/MySkinIssues';
 import MyCurrentProducts from './pages/MyCurrentProducts';
 import MyScanHistory from './pages/MyScanHistory';
 import EditRoutine from './pages/EditRoutine';
+import CircadianClock from './pages/CircadianClock';
+import IngredientScanner from './pages/IngredientScanner';
+import SkinYoga from './pages/SkinYoga';
 
 function App() {
   return (
@@ -24,6 +27,9 @@ function App() {
         <Route path="/profile/products" element={<MyCurrentProducts />} />
         <Route path="/profile/history" element={<MyScanHistory />} />
         <Route path="/routine/edit" element={<EditRoutine />} />
+        <Route path="/circadian" element={<CircadianClock />} />
+        <Route path="/compatibility" element={<IngredientScanner />} />
+        <Route path="/wellness/yoga" element={<SkinYoga />} />
       </Routes>
     </div>
   );

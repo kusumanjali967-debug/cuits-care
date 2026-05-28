@@ -12,6 +12,18 @@ export default function Dashboard() {
   const [toast, setToast] = useState(null);
   const [isNotifOpen, setIsNotifOpen] = useState(false);
   const [notifCount, setNotifCount] = useState(1);
+  const [waterLogged, setWaterLogged] = useState(() => {
+    const saved = localStorage.getItem(`cuitsCare_water_${userData.email || 'guest'}`);
+    return saved ? parseInt(saved, 10) : 0;
+  });
+
+  const handleLogWater = (cups) => {
+    setWaterLogged(prev => {
+      const updated = Math.min(12, Math.max(0, prev + cups));
+      localStorage.setItem(`cuitsCare_water_${userData.email || 'guest'}`, updated.toString());
+      return updated;
+    });
+  };
 
   useEffect(() => {
     if (userData.morningRoutine?.length === 0 && userData.nightRoutine?.length === 0) {
@@ -163,6 +175,9 @@ export default function Dashboard() {
   const score = userData.score || (userData.skinType && userData.skinType !== 'Unknown' ? 84 : 0);
   const undertone = userData.undertone || (userData.skinType === 'Sensitive' || userData.skinType === 'Oily' ? 'Cool' : userData.skinType && userData.skinType !== 'Unknown' ? 'Warm' : 'Unknown');
   const seasonalPalette = userData.seasonalPalette || (userData.skinType === 'Sensitive' ? 'Cool Summer' : userData.skinType === 'Oily' ? 'Cool Winter' : userData.skinType === 'Dry' ? 'Warm Autumn' : userData.skinType === 'Combination' ? 'Warm Spring' : userData.skinType && userData.skinType !== 'Unknown' ? 'Warm Autumn' : 'Unknown');
+
+  const waterTarget = userData.skinType === 'Dry' || (userData.skinIssues || []).includes('Dry Patches') ? 10 : 8;
+  const waterPercent = Math.min(100, Math.round((waterLogged / waterTarget) * 100));
 
   const getProductSuggestions = (skinType, issues = []) => {
     let products = [];
@@ -340,8 +355,92 @@ export default function Dashboard() {
           </div>
         )}
 
+        {/* Moisture Barrier fluid tracker */}
+        <div className="glass-panel slide-up alert-card skin-alert" style={{ gridColumn: '1 / -1', flexDirection: 'column', gap: '16px', padding: '24px', animationDelay: '0.18s' }}>
+          <h3 style={{ margin: 0, fontSize: '1.15rem', display: 'flex', justifyContent: 'space-between', width: '100%', alignItems: 'center' }}>
+            <span>Moisture Hydration Gauge</span>
+            <span style={{ fontSize: '0.8rem', opacity: 0.8 }}>Target: {waterTarget} Cups</span>
+          </h3>
+          
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px', alignItems: 'center', width: '100%' }}>
+            {/* Animated Frosted Cylinder */}
+            <div style={{ width: '56px', height: '90px', borderRadius: '24px', border: '3px solid var(--glass-border)', background: 'rgba(255,255,255,0.1)', overflow: 'hidden', position: 'relative', flexShrink: 0, boxShadow: 'inset 0 4px 10px rgba(0,0,0,0.05)', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}>
+              <div 
+                style={{ 
+                  width: '100%', 
+                  height: `${waterPercent}%`, 
+                  background: 'linear-gradient(180deg, #4facfe 0%, #00f2fe 100%)', 
+                  borderRadius: '0 0 18px 18px',
+                  transition: 'height 0.8s cubic-bezier(0.2, 0.8, 0.2, 1)',
+                  position: 'relative',
+                  overflow: 'hidden',
+                  boxShadow: '0 -4px 15px rgba(0,242,254,0.4)'
+                }}
+              >
+                {/* Wave effect glow */}
+                <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '6px', background: 'rgba(255,255,255,0.6)', filter: 'blur(1px)' }}></div>
+              </div>
+              <span style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', fontSize: '0.9rem', fontWeight: 800, color: 'var(--text-primary)', zIndex: 5, mixBlendMode: 'difference' }}>
+                {waterPercent}%
+              </span>
+            </div>
+
+            {/* Logger controls */}
+            <div style={{ flex: 1, minWidth: '180px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span className="env-badge" style={{ background: waterPercent >= 100 ? 'var(--success)' : 'var(--accent-light)', color: waterPercent >= 100 ? '#fff' : 'var(--accent)', fontWeight: 750, fontSize: '0.75rem', padding: '4px 8px', borderRadius: '8px' }}>
+                  {waterPercent >= 100 ? '🎉 Fully Hydrated' : `${waterLogged} / ${waterTarget} Cups Logged`}
+                </span>
+              </div>
+              <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', margin: 0, lineHeight: 1.45 }}>
+                {envData.loading ? "Calculating atmospheric loss..." : envData.uv > 5 ? "High environmental UV! Your transepidermal water loss is elevated today. Log extra hydration!" : "Normal humidity. Maintain your cellular moisture balance by logging cups today."}
+              </p>
+              <div style={{ display: 'flex', gap: '8px', marginTop: '4px' }}>
+                <button className="icon-btn" onClick={() => handleLogWater(1)} style={{ width: 'auto', padding: '6px 12px', minWidth: 'unset', borderRadius: '10px', fontSize: '0.8rem', fontWeight: 600, background: 'var(--accent)', color: '#fff', border: 'none', cursor: 'pointer' }}>
+                  +1 Cup
+                </button>
+                <button className="icon-btn" onClick={() => handleLogWater(-1)} style={{ width: 'auto', padding: '6px 12px', minWidth: 'unset', borderRadius: '10px', fontSize: '0.8rem', fontWeight: 600, background: 'var(--glass-bg)', border: '1px solid var(--glass-border)', cursor: 'pointer' }}>
+                  -1 Cup
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Skincare & Wellness Suite */}
+        <section className="dashboard-section stack-y slide-up" style={{ gridColumn: '1 / -1', animationDelay: '0.22s', marginBottom: '8px' }}>
+          <div className="section-header">
+            <h3>AI Skincare & Wellness Suite</h3>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '16px' }}>
+            <div className="glass-panel hover-lift" onClick={() => navigate('/compatibility')} style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '10px', cursor: 'pointer', alignItems: 'center', textAlign: 'center' }}>
+              <div style={{ width: '48px', height: '48px', borderRadius: '14px', background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 8px 16px rgba(245, 87, 108, 0.2)' }}>
+                <Star size={24} color="#fff" />
+              </div>
+              <h4 style={{ fontSize: '0.9rem', fontWeight: 700, margin: 0 }}>Active Scanner</h4>
+              <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Check Product Synergy</span>
+            </div>
+
+            <div className="glass-panel hover-lift" onClick={() => navigate('/circadian')} style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '10px', cursor: 'pointer', alignItems: 'center', textAlign: 'center' }}>
+              <div style={{ width: '48px', height: '48px', borderRadius: '14px', background: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 8px 16px rgba(0, 242, 254, 0.2)' }}>
+                <Sun size={24} color="#fff" />
+              </div>
+              <h4 style={{ fontSize: '0.9rem', fontWeight: 700, margin: 0 }}>Circadian Clock</h4>
+              <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Bio-Time Optimizations</span>
+            </div>
+
+            <div className="glass-panel hover-lift" onClick={() => navigate('/wellness/yoga')} style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '10px', cursor: 'pointer', alignItems: 'center', textAlign: 'center' }}>
+              <div style={{ width: '48px', height: '48px', borderRadius: '14px', background: 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 8px 16px rgba(56, 249, 215, 0.2)' }}>
+                <Droplet size={24} color="#fff" />
+              </div>
+              <h4 style={{ fontSize: '0.9rem', fontWeight: 700, margin: 0 }}>Skin Yoga</h4>
+              <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Facial Acupressure Map</span>
+            </div>
+          </div>
+        </section>
+
         {/* Daily Skincare Routine */}
-        <section className="dashboard-section stack-y slide-up" style={{ animationDelay: '0.2s' }}>
+        <section className="dashboard-section stack-y slide-up" style={{ animationDelay: '0.25s' }}>
           <div className="section-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <h3>{isNight ? 'Night Routine' : 'Morning Routine'}</h3>
