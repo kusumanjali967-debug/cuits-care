@@ -111,11 +111,49 @@ export default function Dashboard() {
   const isHighUV = envData.uv !== '--' ? envData.uv >= 6 : (hour >= 10 && hour <= 16);
   const currentUV = envData.uv;
 
-  const getDietInsight = (issues, type) => {
-    if (issues.includes('Acne breakouts')) return "Try to limit dairy and high-sugar foods today to reduce inflammation and prevent new breakouts.";
-    if (issues.includes('Redness / Sensitivity')) return "Incorporate anti-inflammatory foods like berries, nuts, and leafy greens to help soothe your skin.";
-    if (type === 'Dry' || issues.includes('Dullness')) return "Your skin needs hydration! Aim for 8 glasses of water today and eat water-rich foods.";
-    return "Maintain a balanced diet rich in antioxidants today to keep your skin in its best shape.";
+  const getDietInsight = (issues = [], type = "Unknown") => {
+    let recommendations = [];
+
+    // Skin type base advice
+    if (type === 'Dry') {
+      recommendations.push("For your Dry skin: Focus on healthy fats like avocados, olive oil, and water-rich foods (cucumbers, watermelon) to replenish moisture from within.");
+    } else if (type === 'Oily') {
+      recommendations.push("For your Oily skin: Minimize high-glycemic foods and refined carbs which can trigger excess sebum. Opt for zinc-rich foods like pumpkin seeds and spinach.");
+    } else if (type === 'Combination') {
+      recommendations.push("For your Combination skin: Keep your diet balanced with antioxidants and omega-3 fatty acids (like walnuts or flaxseeds) to help regulate T-zone oiliness.");
+    } else if (type === 'Sensitive') {
+      recommendations.push("For your Sensitive skin: Incorporate anti-inflammatory items (ginger, turmeric, blueberries) to soothe reactive skin and support your natural barrier.");
+    } else {
+      recommendations.push("Maintain a balanced diet rich in leafy greens, clean antioxidants, and lean proteins to support overall skin cellular turnover.");
+    }
+
+    // Issues-specific advice
+    if (issues.includes('Acne breakouts')) {
+      recommendations.push("Limit dairy and processed sugars today as they can spike insulin and exacerbate active breakouts.");
+    }
+    if (issues.includes('Redness / Sensitivity')) {
+      recommendations.push("Avoid very hot spices, excess caffeine, and alcohol today, which dilate blood vessels and worsen flushing.");
+    }
+    if (issues.includes('Dark Spots') || issues.includes('Dullness')) {
+      recommendations.push("Load up on Vitamin C-rich foods (berries, citrus fruits) to naturally support collagen and combat pigmentation.");
+    }
+    if (issues.includes('Fine Lines')) {
+      recommendations.push("Incorporate silica-rich foods (oats, cucumbers) and antioxidant-rich foods to help promote elasticity and youthfulness.");
+    }
+    if (issues.includes('Oily T-Zone')) {
+      recommendations.push("Drink organic green tea today, which contains natural catechins that help regulate systemic oil levels.");
+    }
+    if (issues.includes('Dry Patches')) {
+      recommendations.push("Prioritize omega-3 fatty acids found in chia seeds, walnuts, or fish to heal flaky, dehydrated areas.");
+    }
+    if (issues.includes('Large Pores')) {
+      recommendations.push("Eat foods rich in Vitamin A (sweet potatoes, carrots) to regulate skin cell shedding and prevent pore clogging.");
+    }
+
+    const waterCups = type === 'Dry' || issues.includes('Dry Patches') ? 10 : 8;
+    recommendations.push(`Aim for at least ${waterCups} glasses of pure water today to keep your cells plump and hydrated.`);
+
+    return recommendations.join(" ");
   };
 
   const dietInsight = getDietInsight(userData.skinIssues || [], userData.skinType);
