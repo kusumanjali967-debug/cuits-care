@@ -10,6 +10,8 @@ export default function Dashboard() {
   const { userData, updateUserData, toggleRoutine } = useUser();
   const [envData, setEnvData] = useState({ temp: '--', uv: '--', city: 'Locating...', loading: true });
   const [toast, setToast] = useState(null);
+  const [isNotifOpen, setIsNotifOpen] = useState(false);
+  const [notifCount, setNotifCount] = useState(1);
 
   useEffect(() => {
     if (userData.morningRoutine?.length === 0 && userData.nightRoutine?.length === 0) {
@@ -211,9 +213,9 @@ export default function Dashboard() {
           <p className="greeting">{greeting}</p>
           <h2>{userData.name}</h2>
         </div>
-        <button className="icon-btn notif-btn">
+        <button className="icon-btn notif-btn" onClick={() => setIsNotifOpen(true)}>
           <Bell size={24} />
-          <span className="notif-badge">1</span>
+          {notifCount > 0 && <span className="notif-badge">{notifCount}</span>}
         </button>
       </div>
 
@@ -405,6 +407,63 @@ export default function Dashboard() {
           </div>
         </section>
       </div>
+
+      {/* Notifications Modal */}
+      {isNotifOpen && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(8px)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }} className="fade-in">
+          <div className="glass-panel scale-in" style={{ width: '100%', maxWidth: '380px', padding: '24px', position: 'relative', display: 'flex', flexDirection: 'column', gap: '16px', background: 'var(--bg-secondary)', border: '1px solid var(--glass-border)', boxShadow: '0 20px 50px rgba(0,0,0,0.2)', borderRadius: '24px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <h3 style={{ margin: 0, fontSize: '1.2rem' }} className="text-gradient">Notifications</h3>
+              <button 
+                onClick={() => setIsNotifOpen(false)}
+                style={{ background: 'transparent', border: 'none', cursor: 'pointer', fontSize: '1.2rem', color: 'var(--text-secondary)', fontWeight: 'bold' }}
+              >
+                ✕
+              </button>
+            </div>
+            
+            <div className="stack-y" style={{ gap: '12px', margin: '8px 0' }}>
+              <div style={{ display: 'flex', gap: '12px', padding: '12px', background: 'var(--glass-bg)', borderRadius: '12px', border: '1px solid var(--glass-border)' }}>
+                <span style={{ fontSize: '1.3rem' }}>☀️</span>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                  <span style={{ fontWeight: 700, fontSize: '0.85rem' }}>UV Index Warning</span>
+                  <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', margin: 0, lineHeight: 1.35 }}>
+                    UV levels are elevated at your location today. Protect your skin with sunscreen!
+                  </p>
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', gap: '12px', padding: '12px', background: 'var(--glass-bg)', borderRadius: '12px', border: '1px solid var(--glass-border)' }}>
+                <span style={{ fontSize: '1.3rem' }}>🧴</span>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                  <span style={{ fontWeight: 700, fontSize: '0.85rem' }}>Skincare Reminder</span>
+                  <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', margin: 0, lineHeight: 1.35 }}>
+                    Time to perform your tailored {isNight ? 'Night' : 'Morning'} skincare routine!
+                  </p>
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', gap: '12px', padding: '12px', background: 'var(--glass-bg)', borderRadius: '12px', border: '1px solid var(--glass-border)' }}>
+                <span style={{ fontSize: '1.3rem' }}>🥗</span>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                  <span style={{ fontWeight: 700, fontSize: '0.85rem' }}>Nutrition Tip</span>
+                  <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', margin: 0, lineHeight: 1.35 }}>
+                    Incorporate Vitamin C-rich foods today to boost antioxidants and skin brightness.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <button 
+              className="btn-primary" 
+              onClick={() => { setNotifCount(0); setIsNotifOpen(false); }} 
+              style={{ padding: '12px', borderRadius: '12px', fontSize: '0.9rem', minHeight: 'unset', fontWeight: 600 }}
+            >
+              Mark All as Read
+            </button>
+          </div>
+        </div>
+      )}
 
       <BottomNav />
     </div>

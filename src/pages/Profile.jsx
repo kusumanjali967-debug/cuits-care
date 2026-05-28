@@ -11,6 +11,9 @@ export default function Profile() {
   const [isEditing, setIsEditing] = useState(false);
   const [tempType, setTempType] = useState(userData.skinType);
   const [tempIssues, setTempIssues] = useState(userData.skinIssues || []);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [tempName, setTempName] = useState(userData.name || "Guest");
+  const [dailyReminders, setDailyReminders] = useState(true);
 
   const COMMON_ISSUES = [
     "Acne breakouts", "Redness / Sensitivity", "Dark Spots", 
@@ -145,7 +148,7 @@ export default function Profile() {
             <div className="menu-icon-wrapper"><Heart size={20} /></div>
             <span>My Current Products</span>
           </button>
-          <button className="menu-item glass-panel hover-lift">
+          <button className="menu-item glass-panel hover-lift" onClick={() => setIsSettingsOpen(true)}>
             <div className="menu-icon-wrapper"><Settings size={20} /></div>
             <span>Settings</span>
           </button>
@@ -155,7 +158,70 @@ export default function Profile() {
           </button>
         </div>
       </div>
-      
+
+      {/* Settings Modal */}
+      {isSettingsOpen && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(8px)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }} className="fade-in">
+          <div className="glass-panel scale-in" style={{ width: '100%', maxWidth: '380px', padding: '24px', position: 'relative', display: 'flex', flexDirection: 'column', gap: '16px', background: 'var(--bg-secondary)', border: '1px solid var(--glass-border)', boxShadow: '0 20px 50px rgba(0,0,0,0.2)', borderRadius: '24px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <h3 style={{ margin: 0, fontSize: '1.2rem' }} className="text-gradient">App Settings</h3>
+              <button 
+                onClick={() => setIsSettingsOpen(false)}
+                style={{ background: 'transparent', border: 'none', cursor: 'pointer', fontSize: '1.2rem', color: 'var(--text-secondary)', fontWeight: 'bold' }}
+              >
+                ✕
+              </button>
+            </div>
+            
+            <div className="stack-y" style={{ gap: '16px', margin: '8px 0' }}>
+              {/* Profile Name input */}
+              <div className="input-group">
+                <label style={{ fontWeight: 600, fontSize: '0.85rem', display: 'block', marginBottom: '6px' }}>Profile Display Name</label>
+                <input 
+                  type="text" 
+                  className="input-field" 
+                  value={tempName} 
+                  onChange={(e) => setTempName(e.target.value)} 
+                  placeholder="Your Name"
+                  style={{ padding: '12px 16px', fontSize: '0.95rem' }}
+                />
+              </div>
+
+              {/* Reminders Toggle Switch mockup */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 16px', background: 'var(--glass-bg)', borderRadius: '12px', border: '1px solid var(--glass-border)' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                  <span style={{ fontWeight: 600, fontSize: '0.85rem' }}>Skincare Reminders</span>
+                  <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Get notified when it's time for routines</span>
+                </div>
+                <input 
+                  type="checkbox" 
+                  checked={dailyReminders} 
+                  onChange={(e) => setDailyReminders(e.target.checked)}
+                  style={{ width: '20px', height: '20px', accentColor: 'var(--accent)', cursor: 'pointer' }}
+                />
+              </div>
+
+              {/* Version info info item */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 16px', background: 'rgba(0,0,0,0.02)', borderRadius: '12px', border: '1px solid var(--glass-border)', fontSize: '0.8rem' }}>
+                <span style={{ color: 'var(--text-secondary)' }}>Version</span>
+                <span style={{ fontWeight: 600 }}>v1.2.0 (Stable)</span>
+              </div>
+            </div>
+
+            <button 
+              className="btn-primary" 
+              onClick={() => {
+                updateUserData({ name: tempName.trim() || userData.name });
+                setIsSettingsOpen(false);
+              }} 
+              style={{ padding: '12px', borderRadius: '12px', fontSize: '0.9rem', minHeight: 'unset', fontWeight: 600 }}
+            >
+              Save Settings
+            </button>
+          </div>
+        </div>
+      )}
+
       <BottomNav />
     </div>
   );
