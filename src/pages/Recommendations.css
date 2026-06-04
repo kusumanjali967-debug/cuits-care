@@ -1,0 +1,151 @@
+.recommendations-container {
+  min-height: 100vh;
+}
+
+.rec-header {
+  padding-top: 40px;
+}
+
+.privacy-badge-banner {
+  margin: 0 24px 24px 24px;
+  padding: 12px 16px;
+  background: rgba(103, 139, 102, 0.08);
+  border: 1px solid rgba(103, 139, 102, 0.3);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.75rem;
+  color: var(--text-primary);
+  line-height: 1.4;
+  animation: slideUp 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+@media (prefers-color-scheme: dark) {
+  .privacy-badge-banner {
+    background: rgba(125, 165, 123, 0.12);
+    border: 1px solid rgba(125, 165, 123, 0.2);
+  }
+}
+
+.trust-seals-card {
+  padding: 24px;
+}
+
+.seals-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-top: 12px;
+}
+
+@media (min-width: 480px) {
+  .seals-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.seal-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 8px;
+}
+
+.seal-icon {
+  color: var(--accent);
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.seal-item:hover .seal-icon {
+  transform: scale(1.2) rotate(5deg);
+}
+
+.seal-item span {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+
+.doctor-endorsement-card {
+  padding: 24px;
+  background: linear-gradient(135deg, rgba(216,140,125,0.08) 0%, rgba(216,140,125,0.03) 100%);
+  border: 1px solid rgba(216,140,125,0.2);
+}
+
+.doctor-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 12px;
+}
+
+.doctor-avatar {
+  width: 48px;
+  height: 48px;
+  background: var(--accent-light);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+.clinical-badge {
+  font-size: 0.65rem;
+  font-weight: 800;
+  color: var(--accent);
+  background: var(--accent-light);
+  padding: 3px 8px;
+  border-radius: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: inline-block;
+  margin-top: 4px;
+}
+
+.doctor-quote {
+  font-size: 0.9rem;
+  font-style: italic;
+  line-height: 1.5;
+  color: var(--text-primary);
+  margin: 0;
+  border-left: 3px solid var(--accent);
+  padding-left: 14px;
+}
+
+.step-detail-card {
+  padding: 20px;
+  background: var(--bg-secondary);
+}
+
+.directions-box {
+  margin-top: 12px;
+  padding: 10px 14px;
+  background: var(--bg-primary);
+  border-radius: 8px;
+  border-left: 3px solid var(--accent);
+}
+
+.safety-rules-card {
+  padding: 24px;
+}
+
+.safety-rules-list {
+  padding-left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.safety-rules-list li {
+  font-size: 0.85rem;
+  line-height: 1.45;
+  color: var(--text-secondary);
+}
+
+.safety-rules-list li strong {
+  color: var(--text-primary);
+}

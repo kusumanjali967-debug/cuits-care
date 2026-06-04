@@ -12,6 +12,7 @@ import EditRoutine from './pages/EditRoutine';
 import CircadianClock from './pages/CircadianClock';
 import IngredientScanner from './pages/IngredientScanner';
 import SkinYoga from './pages/SkinYoga';
+import Recommendations from './pages/Recommendations';
 
 function App() {
   return (
@@ -30,6 +31,7 @@ function App() {
         <Route path="/circadian" element={<CircadianClock />} />
         <Route path="/compatibility" element={<IngredientScanner />} />
         <Route path="/wellness/yoga" element={<SkinYoga />} />
+        <Route path="/recommendations" element={<Recommendations />} />
       </Routes>
     </div>
   );

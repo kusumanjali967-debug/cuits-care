@@ -269,3 +269,74 @@ p {
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
   }
 }
+
+/* Floating Language Switcher Widget */
+.floating-lang-switcher {
+  position: fixed;
+  top: 15px;
+  right: 15px;
+  z-index: 9999;
+}
+.lang-select-dropdown {
+  padding: 8px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: var(--text-primary);
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  transition: var(--transition);
+  outline: none;
+}
+.lang-select-dropdown:hover {
+  transform: scale(1.03);
+  border-color: var(--accent);
+}
+
+/* 3D card tilt & hover effects */
+.card-3d {
+  transform-style: preserve-3d;
+  perspective: 1000px;
+  transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.4s ease;
+}
+.card-3d:hover {
+  transform: translateY(-8px) rotateX(4deg) rotateY(-4deg) scale(1.02);
+  box-shadow: 0 20px 40px rgba(216, 140, 125, 0.2);
+}
+@media (prefers-color-scheme: dark) {
+  .card-3d:hover {
+    box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+  }
+}
+
+/* Generic Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.4);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.modal-card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 20px 50px rgba(0,0,0,0.25);
+  border-radius: var(--radius-md);
+  width: 100%;
+  max-width: 480px;
+  padding: 28px;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+}
+
