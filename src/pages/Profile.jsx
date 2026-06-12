@@ -1,53 +1,128 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { User, Settings, LogOut, Info, Heart, Clock, Edit3, X, Check } from 'lucide-react';
+import {
+  User, Settings, LogOut, Heart, Clock,
+  Edit3, X, Check, Calendar, Camera, Bell, ExternalLink
+} from 'lucide-react';
 import BottomNav from '../components/BottomNav';
 import { useUser } from '../context/UserContext';
 import './Profile.css';
 
+/* ─── helpers ────────────────────────────────────────────────────────── */
+function scheduleRoutineReminders() {
+  const now = new Date();
+  const morning = new Date(now);
+  morning.setHours(8, 0, 0, 0);
+  if (morning <= now) morning.setDate(morning.getDate() + 1);
+  const evening = new Date(now);
+  evening.setHours(21, 0, 0, 0);
+  if (evening <= now) evening.setDate(evening.getDate() + 1);
+  const fire = (title, body) => {
+    if (typeof Notification !== 'undefined' && Notification.permission === 'granted') {
+      new Notification(title, { body, icon: '/logo192.png' });
+    }
+  };
+  setTimeout(() => fire('☀️ Morning Routine', 'Time for your morning skincare routine!'), morning - now);
+  setTimeout(() => fire('🌙 Evening Routine', "Don't forget your night skincare routine!"), evening - now);
+}
+
+const DERM_LINKS = [
+  { label: 'Practo',          emoji: '🏥', url: 'https://www.practo.com/dermatologist',                              color: '#2563eb' },
+  { label: 'Justdial',        emoji: '📞', url: 'https://www.justdial.com/search?q=dermatologist',                   color: '#f59e0b' },
+  { label: 'Apollo Hospitals', emoji: '⚕️', url: 'https://www.apollohospitals.com/find-a-doctor/dermatology/',       color: '#10b981' },
+];
+
 export default function Profile() {
   const navigate = useNavigate();
   const { userData, updateUserData, logout } = useUser();
-  const [isEditing, setIsEditing] = useState(false);
-  const [tempType, setTempType] = useState(userData.skinType);
-  const [tempIssues, setTempIssues] = useState(userData.skinIssues || []);
+
+  const [isEditing,    setIsEditing]    = useState(false);
+  const [tempType,     setTempType]     = useState(userData.skinType);
+  const [tempIssues,   setTempIssues]   = useState(userData.skinIssues || []);
+
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  const [tempName, setTempName] = useState(userData.name || "Guest");
-  const [dailyReminders, setDailyReminders] = useState(true);
+  const [tempName,        setTempName]       = useState(userData.name || 'Guest');
+  const [notifEnabled,    setNotifEnabled]   = useState(
+    () => localStorage.getItem('cuitsCare_notif_enabled') === 'true'
+  );
 
-  const COMMON_ISSUES = [
-    "Acne breakouts", "Redness / Sensitivity", "Dark Spots", 
-    "Fine Lines", "Dullness"
-  ];
+  const fileInputRef = useRef(null);
 
-  const handleLogout = () => {
-    logout();
-    navigate('/');
-  };
+  const [isDermOpen,    setIsDermOpen]    = useState(false);
+  const [reminderText,  setReminderText]  = useState('');
+  const [reminderDate,  setReminderDate]  = useState('');
+  const [savedReminder, setSavedReminder] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('cuitsCare_appt_reminder') || 'null'); }
+    catch { return null; }
+  });
 
-  const toggleIssue = (issue) => {
-    setTempIssues(prev => 
-      prev.includes(issue) 
-        ? prev.filter(i => i !== issue)
-        : [...prev, issue]
-    );
-  };
+  const COMMON_ISSUES = ['Acne breakouts', 'Redness / Sensitivity', 'Dark Spots', 'Fine Lines', 'Dullness'];
+
+  useEffect(() => {
+    if (notifEnabled && typeof Notification !== 'undefined' && Notification.permission === 'granted') {
+      scheduleRoutineReminders();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const handleLogout = () => { logout(); navigate('/'); };
+
+  const toggleIssue = (issue) =>
+    setTempIssues(prev => prev.includes(issue) ? prev.filter(i => i !== issue) : [...prev, issue]);
 
   const saveProfile = () => {
     const updates = { skinType: tempType, skinIssues: tempIssues };
-    
-    // If skin type changed, clear the routines so they regenerate with new products
-    if (tempType !== userData.skinType) {
-      updates.morningRoutine = [];
-      updates.nightRoutine = [];
-    }
-    
+    if (tempType !== userData.skinType) { updates.morningRoutine = []; updates.nightRoutine = []; }
     updateUserData(updates);
     setIsEditing(false);
   };
 
+  /* photo */
+  const handlePhotoClick  = () => fileInputRef.current?.click();
+  const handlePhotoChange = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => updateUserData({ profilePhoto: ev.target.result });
+    reader.readAsDataURL(file);
+  };
+
+  /* notifications */
+  const handleNotifToggle = async (checked) => {
+    if (checked) {
+      if (!('Notification' in window)) { alert('Your browser does not support notifications.'); return; }
+      const perm = await Notification.requestPermission();
+      if (perm === 'granted') {
+        setNotifEnabled(true);
+        localStorage.setItem('cuitsCare_notif_enabled', 'true');
+        scheduleRoutineReminders();
+        new Notification('🌸 Cuits Care', { body: 'Skincare reminders are now enabled!' });
+      } else {
+        setNotifEnabled(false);
+        localStorage.setItem('cuitsCare_notif_enabled', 'false');
+        alert('Notification permission denied. Please enable it in your browser settings.');
+      }
+    } else {
+      setNotifEnabled(false);
+      localStorage.setItem('cuitsCare_notif_enabled', 'false');
+    }
+  };
+
+  /* reminder */
+  const handleSaveReminder = () => {
+    if (!reminderText.trim() && !reminderDate) return;
+    const obj = { text: reminderText.trim(), date: reminderDate };
+    localStorage.setItem('cuitsCare_appt_reminder', JSON.stringify(obj));
+    setSavedReminder(obj);
+    setReminderText('');
+    setReminderDate('');
+  };
+  const handleClearReminder = () => { localStorage.removeItem('cuitsCare_appt_reminder'); setSavedReminder(null); };
+
   return (
     <div className="profile-container pb-nav fade-in">
+
+      {/* ── Header ── */}
       <div className="profile-header pad-screen slide-up" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <h2>My Profile</h2>
         <button className="icon-btn hover-lift" onClick={() => setIsEditing(!isEditing)}>
@@ -56,18 +131,14 @@ export default function Profile() {
       </div>
 
       <div className="pad-screen stack-y spacing-lg">
+
+        {/* ── Edit / View card ── */}
         {isEditing ? (
           <div className="glass-panel profile-card stack-y scale-in" style={{ alignItems: 'flex-start' }}>
             <h3>Edit Skin Profile</h3>
-            
             <div style={{ width: '100%', marginTop: '12px' }}>
               <label style={{ display: 'block', marginBottom: '8px', fontWeight: 600 }}>Skin Type</label>
-              <select 
-                value={tempType} 
-                onChange={(e) => setTempType(e.target.value)}
-                className="input-field hover-lift"
-                style={{ cursor: 'pointer', padding: '14px' }}
-              >
+              <select value={tempType} onChange={(e) => setTempType(e.target.value)} className="input-field hover-lift" style={{ cursor: 'pointer', padding: '14px' }}>
                 <option value="Unknown">Unknown</option>
                 <option value="Normal">Normal</option>
                 <option value="Oily">Oily</option>
@@ -76,57 +147,59 @@ export default function Profile() {
                 <option value="Sensitive">Sensitive</option>
               </select>
             </div>
-
             <div style={{ width: '100%', marginTop: '16px' }}>
               <label style={{ display: 'block', marginBottom: '8px', fontWeight: 600 }}>Skin Issues</label>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
                 {COMMON_ISSUES.map(issue => {
                   const isActive = tempIssues.includes(issue);
                   return (
-                    <button 
-                      key={issue} 
-                      onClick={() => toggleIssue(issue)}
-                      className="hover-lift"
-                      style={{
-                        padding: '10px 16px',
-                        borderRadius: '20px',
-                        fontSize: '0.85rem',
-                        fontWeight: isActive ? 600 : 500,
-                        background: isActive ? 'var(--accent-gradient)' : 'var(--glass-bg)',
-                        color: isActive ? '#fff' : 'var(--text-primary)',
-                        border: `1px solid ${isActive ? 'transparent' : 'var(--glass-border)'}`,
-                        cursor: 'pointer',
-                        transition: 'all 0.3s ease'
-                      }}
-                    >
+                    <button key={issue} onClick={() => toggleIssue(issue)} className="hover-lift"
+                      style={{ padding: '10px 16px', borderRadius: '20px', fontSize: '0.85rem', fontWeight: isActive ? 600 : 500, background: isActive ? 'var(--accent-gradient)' : 'var(--glass-bg)', color: isActive ? '#fff' : 'var(--text-primary)', border: `1px solid ${isActive ? 'transparent' : 'var(--glass-border)'}`, cursor: 'pointer', transition: 'all 0.3s ease' }}>
                       {issue}
                     </button>
-                  )
+                  );
                 })}
               </div>
             </div>
-
             <button className="btn-primary hover-lift" style={{ marginTop: '20px' }} onClick={saveProfile}>
-              <Check size={18} style={{ marginRight: '8px' }} /> <span>Save Changes</span>
+              <Check size={18} style={{ marginRight: '8px' }} /><span>Save Changes</span>
             </button>
           </div>
         ) : (
           <div className="glass-panel profile-card slide-up hover-lift" style={{ animationDelay: '0.1s' }}>
-            <div className="profile-avatar pulse-slow">
-              <User size={36} color="#fff" />
+
+            {/* ── Clickable avatar ── */}
+            <div
+              onClick={handlePhotoClick}
+              title="Change profile photo"
+              style={{ position: 'relative', cursor: 'pointer', flexShrink: 0, width: '72px', height: '72px' }}
+            >
+              {userData.profilePhoto ? (
+                <img
+                  src={userData.profilePhoto}
+                  alt="Profile"
+                  style={{ width: '72px', height: '72px', borderRadius: '50%', objectFit: 'cover', border: '3px solid var(--accent)', boxShadow: '0 4px 16px rgba(0,0,0,0.18)', transition: 'all 0.3s ease' }}
+                />
+              ) : (
+                <div className="profile-avatar pulse-slow" style={{ width: '72px', height: '72px' }}>
+                  <User size={36} color="#fff" />
+                </div>
+              )}
+              {/* Camera badge */}
+              <span style={{ position: 'absolute', bottom: 0, right: 0, background: 'var(--accent)', borderRadius: '50%', width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '2px solid var(--bg-primary)', boxShadow: '0 2px 8px rgba(0,0,0,0.2)' }}>
+                <Camera size={12} color="#fff" />
+              </span>
             </div>
+            <input ref={fileInputRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={handlePhotoChange} />
+
             <div className="profile-info">
               <h3>{userData.name}</h3>
               <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginTop: '8px' }}>
                 <span className="skin-type-badge" style={{ margin: 0 }}>Skin: {userData.skinType}</span>
                 {userData.score > 0 && (
                   <>
-                    <span className="skin-type-badge" style={{ margin: 0, background: 'var(--accent-light)', color: 'var(--accent)', fontWeight: 750 }}>
-                      Vitals: {userData.score}%
-                    </span>
-                    <span className="skin-type-badge" style={{ margin: 0, background: 'rgba(0,0,0,0.06)', border: '1px solid var(--glass-border)', fontWeight: 650 }}>
-                      {userData.seasonalPalette}
-                    </span>
+                    <span className="skin-type-badge" style={{ margin: 0, background: 'var(--accent-light)', color: 'var(--accent)', fontWeight: 750 }}>Vitals: {userData.score}%</span>
+                    <span className="skin-type-badge" style={{ margin: 0, background: 'rgba(0,0,0,0.06)', border: '1px solid var(--glass-border)', fontWeight: 650 }}>{userData.seasonalPalette}</span>
                   </>
                 )}
               </div>
@@ -139,6 +212,7 @@ export default function Profile() {
           </div>
         )}
 
+        {/* ── Menu ── */}
         <div className="profile-menu stack-y slide-up" style={{ animationDelay: '0.2s' }}>
           <button className="menu-item glass-panel hover-lift" onClick={() => navigate('/profile/history')}>
             <div className="menu-icon-wrapper"><Clock size={20} /></div>
@@ -147,6 +221,10 @@ export default function Profile() {
           <button className="menu-item glass-panel hover-lift" onClick={() => navigate('/profile/products')}>
             <div className="menu-icon-wrapper"><Heart size={20} /></div>
             <span>My Current Products</span>
+          </button>
+          <button className="menu-item glass-panel hover-lift" onClick={() => setIsDermOpen(true)}>
+            <div className="menu-icon-wrapper"><Calendar size={20} /></div>
+            <span>Find a Dermatologist</span>
           </button>
           <button className="menu-item glass-panel hover-lift" onClick={() => setIsSettingsOpen(true)}>
             <div className="menu-icon-wrapper"><Settings size={20} /></div>
@@ -159,65 +237,170 @@ export default function Profile() {
         </div>
       </div>
 
-      {/* Settings Modal */}
-      {isSettingsOpen && (
-        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(8px)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }} className="fade-in">
-          <div className="glass-panel scale-in" style={{ width: '100%', maxWidth: '380px', padding: '24px', position: 'relative', display: 'flex', flexDirection: 'column', gap: '16px', background: 'var(--bg-secondary)', border: '1px solid var(--glass-border)', boxShadow: '0 20px 50px rgba(0,0,0,0.2)', borderRadius: '24px' }}>
+      {/* ════════ Dermatologist bottom-sheet modal ════════ */}
+      {isDermOpen && (
+        <div
+          className="fade-in"
+          style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.45)', backdropFilter: 'blur(10px)', zIndex: 1000, display: 'flex', alignItems: 'flex-end', justifyContent: 'center' }}
+          onClick={(e) => { if (e.target === e.currentTarget) setIsDermOpen(false); }}
+        >
+          <div
+            className="glass-panel scale-in"
+            style={{ width: '100%', maxWidth: '480px', padding: '20px 24px 40px', display: 'flex', flexDirection: 'column', gap: '18px', background: 'var(--bg-secondary)', border: '1px solid var(--glass-border)', boxShadow: '0 -8px 40px rgba(0,0,0,0.2)', borderRadius: '28px 28px 0 0' }}
+          >
+            {/* handle */}
+            <div style={{ width: '40px', height: '4px', background: 'var(--glass-border)', borderRadius: '2px', margin: '0 auto' }} />
+
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <h3 style={{ margin: 0, fontSize: '1.2rem' }} className="text-gradient">Settings</h3>
-              <button 
-                onClick={() => setIsSettingsOpen(false)}
-                style={{ background: 'transparent', border: 'none', cursor: 'pointer', fontSize: '1.2rem', color: 'var(--text-secondary)', fontWeight: 'bold' }}
-              >
-                ✕
+              <div>
+                <h3 style={{ margin: 0, fontSize: '1.2rem' }} className="text-gradient">Book a Dermatologist</h3>
+                <p style={{ margin: '4px 0 0', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Find specialists near you</p>
+              </div>
+              <button onClick={() => setIsDermOpen(false)} style={{ background: 'var(--glass-bg)', border: '1px solid var(--glass-border)', borderRadius: '50%', width: '36px', height: '36px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-secondary)' }}>
+                <X size={18} />
               </button>
             </div>
-            
+
+            {/* Quick links */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              {DERM_LINKS.map(link => (
+                <a
+                  key={link.label}
+                  href={link.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 18px', borderRadius: '16px', background: 'var(--glass-bg)', border: `1px solid ${link.color}33`, textDecoration: 'none', color: 'var(--text-primary)', fontWeight: 600, fontSize: '0.95rem', boxShadow: `0 2px 12px ${link.color}18`, transition: 'transform 0.18s ease, box-shadow 0.18s ease' }}
+                  onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = `0 6px 20px ${link.color}30`; }}
+                  onMouseLeave={e => { e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = `0 2px 12px ${link.color}18`; }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <span style={{ fontSize: '1.4rem' }}>{link.emoji}</span>
+                    <span>{link.label}</span>
+                  </div>
+                  <ExternalLink size={16} color={link.color} />
+                </a>
+              ))}
+            </div>
+
+            <div style={{ height: '1px', background: 'var(--glass-border)' }} />
+
+            {/* Reminder section */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              <p style={{ margin: 0, fontWeight: 700, fontSize: '0.88rem', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <Bell size={15} color="var(--accent)" /> Appointment Reminder
+              </p>
+              {savedReminder ? (
+                <div style={{ padding: '14px 16px', borderRadius: '14px', background: 'var(--accent-light)', border: '1px solid var(--accent)', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '8px' }}>
+                  <div>
+                    <p style={{ margin: 0, fontWeight: 600, fontSize: '0.88rem', color: 'var(--accent)' }}>Saved Reminder</p>
+                    {savedReminder.text && <p style={{ margin: '4px 0 0', fontSize: '0.85rem' }}>{savedReminder.text}</p>}
+                    {savedReminder.date && <p style={{ margin: '4px 0 0', fontSize: '0.78rem', color: 'var(--text-secondary)' }}>📅 {new Date(savedReminder.date + 'T00:00:00').toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}</p>}
+                  </div>
+                  <button onClick={handleClearReminder} style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--danger)', flexShrink: 0 }}>
+                    <X size={16} />
+                  </button>
+                </div>
+              ) : (
+                <>
+                  <input type="text" className="input-field" placeholder="e.g. Appointment with Dr. Sharma" value={reminderText} onChange={e => setReminderText(e.target.value)} style={{ padding: '12px 16px', fontSize: '0.9rem' }} />
+                  <input type="date" className="input-field" value={reminderDate} onChange={e => setReminderDate(e.target.value)} style={{ padding: '12px 16px', fontSize: '0.9rem' }} />
+                  <button className="btn-primary hover-lift" onClick={handleSaveReminder} style={{ padding: '12px', fontSize: '0.9rem', borderRadius: '14px', minHeight: 'unset', fontWeight: 600 }}>
+                    <Check size={16} style={{ marginRight: '6px' }} /> Save Reminder
+                  </button>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ════════ Settings Modal ════════ */}
+      {isSettingsOpen && (
+        <div
+          className="fade-in"
+          style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(8px)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}
+        >
+          <div
+            className="glass-panel scale-in"
+            style={{ width: '100%', maxWidth: '380px', padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px', background: 'var(--bg-secondary)', border: '1px solid var(--glass-border)', boxShadow: '0 20px 50px rgba(0,0,0,0.2)', borderRadius: '24px' }}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <h3 style={{ margin: 0, fontSize: '1.2rem' }} className="text-gradient">Settings</h3>
+              <button onClick={() => setIsSettingsOpen(false)} style={{ background: 'transparent', border: 'none', cursor: 'pointer', fontSize: '1.2rem', color: 'var(--text-secondary)', fontWeight: 'bold' }}>✕</button>
+            </div>
+
             <div className="stack-y" style={{ gap: '16px', margin: '8px 0' }}>
-              {/* Profile Name input */}
+              {/* Name */}
               <div className="input-group">
                 <label style={{ fontWeight: 600, fontSize: '0.85rem', display: 'block', marginBottom: '6px' }}>Profile Display Name</label>
-                <input 
-                  type="text" 
-                  className="input-field" 
-                  value={tempName} 
-                  onChange={(e) => setTempName(e.target.value)} 
-                  placeholder="Your Name"
-                  style={{ padding: '12px 16px', fontSize: '0.95rem' }}
-                />
+                <input type="text" className="input-field" value={tempName} onChange={(e) => setTempName(e.target.value)} placeholder="Your Name" style={{ padding: '12px 16px', fontSize: '0.95rem' }} />
               </div>
 
-              {/* Reminders Toggle Switch mockup */}
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 16px', background: 'var(--glass-bg)', borderRadius: '12px', border: '1px solid var(--glass-border)' }}>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                  <span style={{ fontWeight: 600, fontSize: '0.85rem' }}>Skincare Reminders</span>
-                  <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Get notified when it's time for routines</span>
+              {/* Notifications toggle */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '14px 16px', background: 'var(--glass-bg)', borderRadius: '14px', border: '1px solid var(--glass-border)', gap: '12px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flex: 1 }}>
+                  <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: notifEnabled ? 'var(--accent-light)' : 'rgba(0,0,0,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, transition: 'background 0.25s' }}>
+                    <Bell size={18} color={notifEnabled ? 'var(--accent)' : 'var(--text-secondary)'} />
+                  </div>
+                  <div>
+                    <p style={{ margin: 0, fontWeight: 600, fontSize: '0.85rem' }}>Skincare Reminders</p>
+                    <p style={{ margin: '2px 0 0', fontSize: '0.72rem', color: 'var(--text-secondary)' }}>
+                      {notifEnabled ? '🔔 On — 8 am & 9 pm nudges' : 'Get notified at 8 am & 9 pm'}
+                    </p>
+                  </div>
                 </div>
-                <input 
-                  type="checkbox" 
-                  checked={dailyReminders} 
-                  onChange={(e) => setDailyReminders(e.target.checked)}
-                  style={{ width: '20px', height: '20px', accentColor: 'var(--accent)', cursor: 'pointer' }}
-                />
+                {/* Animated pill toggle */}
+                <div
+                  onClick={() => handleNotifToggle(!notifEnabled)}
+                  style={{ width: '48px', height: '26px', borderRadius: '13px', background: notifEnabled ? 'var(--accent)' : 'var(--glass-border)', position: 'relative', cursor: 'pointer', flexShrink: 0, transition: 'background 0.25s ease' }}
+                >
+                  <span style={{ position: 'absolute', top: '3px', left: notifEnabled ? '25px' : '3px', width: '20px', height: '20px', borderRadius: '50%', background: '#fff', transition: 'left 0.25s ease', boxShadow: '0 1px 4px rgba(0,0,0,0.25)' }} />
+                </div>
               </div>
 
-              {/* Version info info item */}
+              {/* Version */}
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 16px', background: 'rgba(0,0,0,0.02)', borderRadius: '12px', border: '1px solid var(--glass-border)', fontSize: '0.8rem' }}>
                 <span style={{ color: 'var(--text-secondary)' }}>Version</span>
                 <span style={{ fontWeight: 600 }}>v1.2.0 (Stable)</span>
               </div>
             </div>
 
-            <button 
-              className="btn-primary" 
-              onClick={() => {
-                updateUserData({ name: tempName.trim() || userData.name });
-                setIsSettingsOpen(false);
-              }} 
+            <button
+              className="btn-primary"
+              onClick={() => { updateUserData({ name: tempName.trim() || userData.name }); setIsSettingsOpen(false); }}
               style={{ padding: '12px', borderRadius: '12px', fontSize: '0.9rem', minHeight: 'unset', fontWeight: 600 }}
             >
               Save Settings
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* Dermatologist Finder Modal */}
+      {isDermOpen && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(8px)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }} className="fade-in">
+          <div className="glass-panel scale-in" style={{ width: '100%', maxWidth: '380px', padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px', background: 'var(--bg-secondary)', borderRadius: '24px', boxShadow: '0 20px 50px rgba(0,0,0,0.2)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <h3 style={{ margin: 0, fontSize: '1.2rem' }} className="text-gradient">Book a Dermatologist</h3>
+              <button onClick={() => setIsDermOpen(false)} style={{ background: 'transparent', border: 'none', cursor: 'pointer', fontSize: '1.2rem', color: 'var(--text-secondary)' }}>✕</button>
+            </div>
+            <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Find and book a certified dermatologist near you:</p>
+            {[{ label: 'Practo', url: 'https://www.practo.com/dermatologist', color: '#2196F3' }, { label: 'Justdial', url: 'https://www.justdial.com/All-India/Dermatologist', color: '#FF9800' }, { label: 'Apollo Hospitals', url: 'https://www.apollohospitals.com/find-a-doctor/dermatology/', color: '#E53935' }].map(link => (
+              <a key={link.label} href={link.url} target="_blank" rel="noopener noreferrer"
+                style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 16px', borderRadius: '14px', background: link.color + '12', border: `1px solid ${link.color}30`, textDecoration: 'none', color: 'var(--text-primary)' }}>
+                <span style={{ fontWeight: 700, fontSize: '0.9rem' }}>{link.label}</span>
+                <ExternalLink size={16} color={link.color} />
+              </a>
+            ))}
+            <div style={{ borderTop: '1px solid var(--glass-border)', paddingTop: '14px' }}>
+              <p style={{ fontWeight: 600, fontSize: '0.85rem', margin: '0 0 8px' }}>📅 Set an Appointment Reminder</p>
+              <input type="text" className="input-field" placeholder="e.g. Visit Dr. Sharma for skin check" value={apptReminder} onChange={e => setApptReminder(e.target.value)} style={{ padding: '10px 14px', marginBottom: '8px', fontSize: '0.88rem' }} />
+              <input type="date" className="input-field" value={apptDate} onChange={e => setApptDate(e.target.value)} style={{ padding: '10px 14px', marginBottom: '10px', fontSize: '0.88rem' }} />
+              {localStorage.getItem('cuitsCare_appt_reminder') && (
+                <p style={{ fontSize: '0.8rem', color: 'var(--success)', margin: '0 0 8px' }}>✅ Saved: {localStorage.getItem('cuitsCare_appt_reminder')}</p>
+              )}
+              <button className="btn-primary" onClick={saveApptReminder} style={{ padding: '11px', minHeight: 'unset', fontSize: '0.88rem' }}>Save Reminder</button>
+            </div>
           </div>
         </div>
       )}
