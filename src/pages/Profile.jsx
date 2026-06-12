@@ -376,34 +376,7 @@ export default function Profile() {
         </div>
       )}
 
-      {/* Dermatologist Finder Modal */}
-      {isDermOpen && (
-        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(8px)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }} className="fade-in">
-          <div className="glass-panel scale-in" style={{ width: '100%', maxWidth: '380px', padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px', background: 'var(--bg-secondary)', borderRadius: '24px', boxShadow: '0 20px 50px rgba(0,0,0,0.2)' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <h3 style={{ margin: 0, fontSize: '1.2rem' }} className="text-gradient">Book a Dermatologist</h3>
-              <button onClick={() => setIsDermOpen(false)} style={{ background: 'transparent', border: 'none', cursor: 'pointer', fontSize: '1.2rem', color: 'var(--text-secondary)' }}>✕</button>
-            </div>
-            <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Find and book a certified dermatologist near you:</p>
-            {[{ label: 'Practo', url: 'https://www.practo.com/dermatologist', color: '#2196F3' }, { label: 'Justdial', url: 'https://www.justdial.com/All-India/Dermatologist', color: '#FF9800' }, { label: 'Apollo Hospitals', url: 'https://www.apollohospitals.com/find-a-doctor/dermatology/', color: '#E53935' }].map(link => (
-              <a key={link.label} href={link.url} target="_blank" rel="noopener noreferrer"
-                style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 16px', borderRadius: '14px', background: link.color + '12', border: `1px solid ${link.color}30`, textDecoration: 'none', color: 'var(--text-primary)' }}>
-                <span style={{ fontWeight: 700, fontSize: '0.9rem' }}>{link.label}</span>
-                <ExternalLink size={16} color={link.color} />
-              </a>
-            ))}
-            <div style={{ borderTop: '1px solid var(--glass-border)', paddingTop: '14px' }}>
-              <p style={{ fontWeight: 600, fontSize: '0.85rem', margin: '0 0 8px' }}>📅 Set an Appointment Reminder</p>
-              <input type="text" className="input-field" placeholder="e.g. Visit Dr. Sharma for skin check" value={apptReminder} onChange={e => setApptReminder(e.target.value)} style={{ padding: '10px 14px', marginBottom: '8px', fontSize: '0.88rem' }} />
-              <input type="date" className="input-field" value={apptDate} onChange={e => setApptDate(e.target.value)} style={{ padding: '10px 14px', marginBottom: '10px', fontSize: '0.88rem' }} />
-              {localStorage.getItem('cuitsCare_appt_reminder') && (
-                <p style={{ fontSize: '0.8rem', color: 'var(--success)', margin: '0 0 8px' }}>✅ Saved: {localStorage.getItem('cuitsCare_appt_reminder')}</p>
-              )}
-              <button className="btn-primary" onClick={saveApptReminder} style={{ padding: '11px', minHeight: 'unset', fontSize: '0.88rem' }}>Save Reminder</button>
-            </div>
-          </div>
-        </div>
-      )}
+
 
       <BottomNav />
     </div>
