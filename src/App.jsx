@@ -17,6 +17,7 @@ import SkinDiary from './pages/SkinDiary';
 import PhotoJournal from './pages/PhotoJournal';
 import IngredientSearch from './pages/IngredientSearch';
 import SkinChat from './pages/SkinChat';
+import ColorPalette from './pages/ColorPalette';
 
 function App() {
   return (
@@ -40,6 +41,7 @@ function App() {
         <Route path="/photos" element={<PhotoJournal />} />
         <Route path="/ingredients" element={<IngredientSearch />} />
         <Route path="/chat" element={<SkinChat />} />
+        <Route path="/palette" element={<ColorPalette />} />
       </Routes>
     </div>
   );

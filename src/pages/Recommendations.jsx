@@ -1,13 +1,21 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Shield, Heart, Award, Sparkles, AlertTriangle, CheckCircle, Info } from 'lucide-react';
+import { ArrowLeft, Shield, Heart, Award, Sparkles, AlertTriangle, CheckCircle, Info, ShoppingBag, ExternalLink } from 'lucide-react';
 import { useUser } from '../context/UserContext';
 import { useLanguage } from '../context/LanguageContext';
 import './Recommendations.css';
+
+// Generate Amazon India + Nykaa search URLs for a product name
+const buyLinks = (name) => ({
+  amazon: `https://www.amazon.in/s?k=${encodeURIComponent(name + ' skincare')}`,
+  nykaa:  `https://www.nykaa.com/search/result/?q=${encodeURIComponent(name)}`
+});
 
 export default function Recommendations() {
   const navigate = useNavigate();
   const { userData } = useUser();
   const { t } = useLanguage();
+  const [expandedBuy, setExpandedBuy] = useState(null);
 
   const skinType = userData.skinType || 'Unknown';
   const issues = userData.skinIssues || [];
@@ -195,19 +203,34 @@ export default function Recommendations() {
           </div>
 
           <div className="steps-list stack-y">
-            {routineData.morning.map((item, idx) => (
-              <div key={idx} className="glass-panel step-detail-card card-3d">
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
-                  <span style={{ fontWeight: 750, color: 'var(--accent)', fontSize: '0.9rem' }}>{item.step}</span>
-                  <span className="env-badge" style={{ fontSize: '0.7rem', padding: '3px 8px' }}>{item.name}</span>
+            {routineData.morning.map((item, idx) => {
+              const key = `am-${idx}`;
+              const links = buyLinks(item.name);
+              return (
+                <div key={idx} className="glass-panel step-detail-card card-3d">
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                    <span style={{ fontWeight: 750, color: 'var(--accent)', fontSize: '0.9rem' }}>{item.step}</span>
+                    <span className="env-badge" style={{ fontSize: '0.7rem', padding: '3px 8px' }}>{item.name}</span>
+                  </div>
+                  <p style={{ margin: '4px 0', fontSize: '0.9rem', color: 'var(--text-primary)', fontWeight: 600 }}>{item.purpose}</p>
+                  <div className="directions-box">
+                    <span style={{ fontWeight: 700, fontSize: '0.75rem', color: 'var(--text-secondary)', textTransform: 'uppercase' }}>{t('routineDirections')}:</span>
+                    <p style={{ margin: '2px 0 0 0', fontSize: '0.825rem', color: 'var(--text-secondary)' }}>{item.direction}</p>
+                  </div>
+                  {/* Buy Now */}
+                  <div style={{ marginTop: '10px', display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                    <a href={links.amazon} target="_blank" rel="noopener noreferrer"
+                      style={{ display: 'flex', alignItems: 'center', gap: '5px', padding: '6px 12px', borderRadius: '12px', background: '#ff9900', color: '#fff', fontSize: '0.75rem', fontWeight: 700, textDecoration: 'none' }}>
+                      <ShoppingBag size={12} /> Amazon
+                    </a>
+                    <a href={links.nykaa} target="_blank" rel="noopener noreferrer"
+                      style={{ display: 'flex', alignItems: 'center', gap: '5px', padding: '6px 12px', borderRadius: '12px', background: '#fc2779', color: '#fff', fontSize: '0.75rem', fontWeight: 700, textDecoration: 'none' }}>
+                      <ExternalLink size={12} /> Nykaa
+                    </a>
+                  </div>
                 </div>
-                <p style={{ margin: '4px 0', fontSize: '0.9rem', color: 'var(--text-primary)', fontWeight: 600 }}>{item.purpose}</p>
-                <div className="directions-box">
-                  <span style={{ fontWeight: 700, fontSize: '0.75rem', color: 'var(--text-secondary)', textTransform: 'uppercase' }}>{t('routineDirections')}:</span>
-                  <p style={{ margin: '2px 0 0 0', fontSize: '0.825rem', color: 'var(--text-secondary)' }}>{item.direction}</p>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </section>
 
@@ -219,19 +242,57 @@ export default function Recommendations() {
           </div>
 
           <div className="steps-list stack-y">
-            {routineData.night.map((item, idx) => (
-              <div key={idx} className="glass-panel step-detail-card card-3d">
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
-                  <span style={{ fontWeight: 750, color: '#2f80ed', fontSize: '0.9rem' }}>{item.step}</span>
-                  <span className="env-badge" style={{ fontSize: '0.7rem', padding: '3px 8px' }}>{item.name}</span>
+            {routineData.night.map((item, idx) => {
+              const links = buyLinks(item.name);
+              return (
+                <div key={idx} className="glass-panel step-detail-card card-3d">
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                    <span style={{ fontWeight: 750, color: '#2f80ed', fontSize: '0.9rem' }}>{item.step}</span>
+                    <span className="env-badge" style={{ fontSize: '0.7rem', padding: '3px 8px' }}>{item.name}</span>
+                  </div>
+                  <p style={{ margin: '4px 0', fontSize: '0.9rem', color: 'var(--text-primary)', fontWeight: 600 }}>{item.purpose}</p>
+                  <div className="directions-box">
+                    <span style={{ fontWeight: 700, fontSize: '0.75rem', color: 'var(--text-secondary)', textTransform: 'uppercase' }}>{t('routineDirections')}:</span>
+                    <p style={{ margin: '2px 0 0 0', fontSize: '0.825rem', color: 'var(--text-secondary)' }}>{item.direction}</p>
+                  </div>
+                  <div style={{ marginTop: '10px', display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                    <a href={links.amazon} target="_blank" rel="noopener noreferrer"
+                      style={{ display: 'flex', alignItems: 'center', gap: '5px', padding: '6px 12px', borderRadius: '12px', background: '#ff9900', color: '#fff', fontSize: '0.75rem', fontWeight: 700, textDecoration: 'none' }}>
+                      <ShoppingBag size={12} /> Amazon
+                    </a>
+                    <a href={links.nykaa} target="_blank" rel="noopener noreferrer"
+                      style={{ display: 'flex', alignItems: 'center', gap: '5px', padding: '6px 12px', borderRadius: '12px', background: '#fc2779', color: '#fff', fontSize: '0.75rem', fontWeight: 700, textDecoration: 'none' }}>
+                      <ExternalLink size={12} /> Nykaa
+                    </a>
+                  </div>
                 </div>
-                <p style={{ margin: '4px 0', fontSize: '0.9rem', color: 'var(--text-primary)', fontWeight: 600 }}>{item.purpose}</p>
-                <div className="directions-box">
-                  <span style={{ fontWeight: 700, fontSize: '0.75rem', color: 'var(--text-secondary)', textTransform: 'uppercase' }}>{t('routineDirections')}:</span>
-                  <p style={{ margin: '2px 0 0 0', fontSize: '0.825rem', color: 'var(--text-secondary)' }}>{item.direction}</p>
+              );
+            })}
+          </div>
+        </section>
+
+        {/* 🛒 Top Product Picks with Buy Now */}
+        <section className="glass-panel card-3d slide-up" style={{ padding: '20px' }}>
+          <h3 style={{ fontSize: '1.05rem', marginBottom: '14px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <ShoppingBag size={18} color="var(--accent)" />
+            Top Picks for {skinType} Skin
+          </h3>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            {[...routineData.morning, ...routineData.night].slice(0, 4).map((item, idx) => {
+              const links = buyLinks(item.name);
+              return (
+                <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 14px', background: 'var(--glass-bg)', borderRadius: '14px', border: '1px solid var(--glass-border)', gap: '10px' }}>
+                  <div style={{ flex: 1 }}>
+                    <p style={{ margin: 0, fontWeight: 600, fontSize: '0.88rem' }}>{item.name}</p>
+                    <p style={{ margin: 0, fontSize: '0.75rem', color: 'var(--text-secondary)' }}>{item.step}</p>
+                  </div>
+                  <div style={{ display: 'flex', gap: '6px' }}>
+                    <a href={links.amazon} target="_blank" rel="noopener noreferrer" style={{ padding: '5px 10px', borderRadius: '10px', background: '#ff9900', color: '#fff', fontSize: '0.72rem', fontWeight: 700, textDecoration: 'none' }}>Amazon</a>
+                    <a href={links.nykaa} target="_blank" rel="noopener noreferrer" style={{ padding: '5px 10px', borderRadius: '10px', background: '#fc2779', color: '#fff', fontSize: '0.72rem', fontWeight: 700, textDecoration: 'none' }}>Nykaa</a>
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </section>
 
