@@ -1,0 +1,519 @@
+/* ===================================================
+   SkinDiary.css — Premium glassmorphism diary page
+   =================================================== */
+
+/* ── Container ── */
+.diary-container {
+  min-height: 100vh;
+  background: transparent;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Header ── */
+.diary-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-top: 52px;
+  padding-bottom: 8px;
+  position: relative;
+}
+
+.diary-back-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1.5px solid var(--glass-border);
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: var(--text-primary);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: var(--transition);
+  box-shadow: var(--card-shadow);
+}
+
+.diary-back-btn:hover {
+  background: var(--accent-light);
+  border-color: var(--accent);
+}
+
+.diary-header-text {
+  flex: 1;
+}
+
+.diary-title {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  line-height: 1.15;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.diary-title-icon {
+  font-size: 1.4rem;
+}
+
+.diary-subtitle {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  margin-top: 2px;
+  font-weight: 400;
+}
+
+.diary-header-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--accent-gradient);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  flex-shrink: 0;
+  box-shadow: 0 4px 14px rgba(216, 140, 125, 0.35);
+}
+
+/* ── Page Content ── */
+.diary-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  padding-top: 16px;
+  padding-bottom: 32px;
+}
+
+/* ── Write Card ── */
+.diary-write-card {
+  padding: 22px 20px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  border-radius: var(--radius-md);
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.72) 0%,
+    rgba(255, 255, 255, 0.52) 100%
+  );
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  box-shadow: 0 8px 40px rgba(216, 140, 125, 0.1), 0 2px 8px rgba(0,0,0,0.04);
+  position: relative;
+  overflow: hidden;
+}
+
+@media (prefers-color-scheme: dark) {
+  .diary-write-card {
+    background: linear-gradient(
+      135deg,
+      rgba(40, 36, 34, 0.82) 0%,
+      rgba(30, 27, 25, 0.72) 100%
+    );
+    border-color: rgba(255, 255, 255, 0.08);
+  }
+}
+
+/* Decorative top stripe */
+.diary-write-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--accent-gradient);
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+}
+
+.diary-write-header {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.diary-write-icon {
+  color: var(--accent);
+}
+
+.diary-today-label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--accent);
+  letter-spacing: 0.02em;
+  text-transform: capitalize;
+}
+
+/* ── Textarea ── */
+.diary-textarea {
+  resize: none;
+  min-height: 108px;
+  font-size: 0.97rem;
+  line-height: 1.7;
+  border-radius: var(--radius-sm);
+  padding: 14px 16px;
+  background: rgba(255, 255, 255, 0.55) !important;
+  transition: var(--transition);
+}
+
+@media (prefers-color-scheme: dark) {
+  .diary-textarea {
+    background: rgba(255, 255, 255, 0.06) !important;
+  }
+}
+
+.diary-textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px var(--accent-light);
+}
+
+.diary-textarea::placeholder {
+  color: var(--text-secondary);
+  opacity: 0.7;
+  font-size: 0.9rem;
+}
+
+/* ── Section Label ── */
+.diary-section-label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+/* ── Mood Row ── */
+.diary-mood-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  scrollbar-width: none;
+}
+
+.diary-mood-row::-webkit-scrollbar {
+  display: none;
+}
+
+.diary-mood-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
+  border: 1.5px solid var(--glass-border);
+  background: var(--glass-bg);
+  backdrop-filter: blur(8px);
+  cursor: pointer;
+  transition: var(--transition);
+  flex-shrink: 0;
+  min-width: 58px;
+}
+
+.diary-mood-btn:hover {
+  transform: translateY(-3px) scale(1.06);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+}
+
+.diary-mood-active {
+  transform: translateY(-3px) scale(1.08);
+  box-shadow: 0 8px 22px rgba(0,0,0,0.1);
+}
+
+.diary-mood-emoji {
+  font-size: 1.6rem;
+  line-height: 1;
+  display: block;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.08));
+}
+
+.diary-mood-label {
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+/* ── Tag Chips ── */
+.diary-tags-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.diary-tag-chip {
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1.5px solid var(--glass-border);
+  background: var(--glass-bg);
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  white-space: nowrap;
+  backdrop-filter: blur(8px);
+}
+
+.diary-tag-chip:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.diary-tag-active {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 14px rgba(0,0,0,0.1);
+  font-weight: 700;
+}
+
+/* ── Save Button ── */
+.diary-save-btn {
+  margin-top: 4px;
+  transition: var(--transition), background 0.3s ease;
+}
+
+.diary-save-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+.diary-save-success {
+  background: linear-gradient(135deg, #678b66, #7da57b) !important;
+  box-shadow: 0 6px 20px rgba(103, 139, 102, 0.35) !important;
+}
+
+/* ── Entries Section ── */
+.diary-entries-section {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.diary-entries-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.diary-entries-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.diary-entries-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--accent-gradient);
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(216, 140, 125, 0.3);
+}
+
+/* ── Entry Cards ── */
+.diary-entries-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.diary-entry-card {
+  padding: 18px 18px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  border-radius: var(--radius-md);
+}
+
+@keyframes entrySlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes entrySlideOut {
+  from {
+    opacity: 1;
+    transform: scale(1);
+    max-height: 300px;
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.93) translateX(20px);
+    max-height: 0;
+    padding: 0;
+    margin: 0;
+  }
+}
+
+.diary-entry-enter {
+  animation: entrySlideIn 0.38s cubic-bezier(0.25, 0.8, 0.25, 1) both;
+}
+
+.diary-entry-deleting {
+  animation: entrySlideOut 0.38s cubic-bezier(0.4, 0, 0.6, 1) both;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/* ── Entry Top Row ── */
+.diary-entry-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.diary-entry-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.diary-entry-date {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.diary-entry-time {
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+}
+
+.diary-entry-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.diary-entry-mood {
+  font-size: 1.35rem;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.08));
+}
+
+.diary-delete-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(207, 102, 121, 0.25);
+  background: rgba(207, 102, 121, 0.08);
+  color: #cf6679;
+  cursor: pointer;
+  transition: var(--transition);
+  flex-shrink: 0;
+}
+
+.diary-delete-btn:hover {
+  background: rgba(207, 102, 121, 0.2);
+  border-color: #cf6679;
+  transform: scale(1.1);
+}
+
+/* ── Entry Tags ── */
+.diary-entry-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.diary-entry-tag-pill {
+  padding: 3px 11px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+/* ── Entry Note Text ── */
+.diary-entry-note {
+  font-size: 0.88rem;
+  color: var(--text-primary);
+  line-height: 1.65;
+  white-space: pre-wrap;
+  word-break: break-word;
+  padding-top: 2px;
+  border-top: 1px solid rgba(0,0,0,0.05);
+}
+
+.diary-note-empty {
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+/* ── Empty State ── */
+.diary-empty {
+  padding: 44px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 14px;
+}
+
+@keyframes sparkleFloat {
+  0%, 100% { transform: translateY(0) rotate(0deg) scale(1); }
+  33%       { transform: translateY(-10px) rotate(8deg) scale(1.08); }
+  66%       { transform: translateY(-5px) rotate(-5deg) scale(1.04); }
+}
+
+.diary-empty-sparkle {
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  background: var(--accent-gradient);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  animation: sparkleFloat 3.2s ease-in-out infinite;
+  box-shadow: 0 8px 28px rgba(216, 140, 125, 0.4);
+}
+
+.diary-empty-title {
+  font-size: 1.12rem;
+  font-weight: 700;
+  color: var(--text-primary) !important;
+}
+
+.diary-empty-sub {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  max-width: 280px;
+}

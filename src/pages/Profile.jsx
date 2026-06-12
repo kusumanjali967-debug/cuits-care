@@ -164,7 +164,7 @@ export default function Profile() {
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(8px)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }} className="fade-in">
           <div className="glass-panel scale-in" style={{ width: '100%', maxWidth: '380px', padding: '24px', position: 'relative', display: 'flex', flexDirection: 'column', gap: '16px', background: 'var(--bg-secondary)', border: '1px solid var(--glass-border)', boxShadow: '0 20px 50px rgba(0,0,0,0.2)', borderRadius: '24px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <h3 style={{ margin: 0, fontSize: '1.2rem' }} className="text-gradient">App Settings</h3>
+              <h3 style={{ margin: 0, fontSize: '1.2rem' }} className="text-gradient">Settings</h3>
               <button 
                 onClick={() => setIsSettingsOpen(false)}
                 style={{ background: 'transparent', border: 'none', cursor: 'pointer', fontSize: '1.2rem', color: 'var(--text-secondary)', fontWeight: 'bold' }}

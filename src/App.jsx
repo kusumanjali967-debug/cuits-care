@@ -13,6 +13,10 @@ import CircadianClock from './pages/CircadianClock';
 import IngredientScanner from './pages/IngredientScanner';
 import SkinYoga from './pages/SkinYoga';
 import Recommendations from './pages/Recommendations';
+import SkinDiary from './pages/SkinDiary';
+import PhotoJournal from './pages/PhotoJournal';
+import IngredientSearch from './pages/IngredientSearch';
+import SkinChat from './pages/SkinChat';
 
 function App() {
   return (
@@ -32,6 +36,10 @@ function App() {
         <Route path="/compatibility" element={<IngredientScanner />} />
         <Route path="/wellness/yoga" element={<SkinYoga />} />
         <Route path="/recommendations" element={<Recommendations />} />
+        <Route path="/diary" element={<SkinDiary />} />
+        <Route path="/photos" element={<PhotoJournal />} />
+        <Route path="/ingredients" element={<IngredientSearch />} />
+        <Route path="/chat" element={<SkinChat />} />
       </Routes>
     </div>
   );
