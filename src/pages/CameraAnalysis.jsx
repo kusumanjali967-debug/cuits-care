@@ -234,7 +234,18 @@ export default function CameraAnalysis() {
       ],
       history: [
         ...(userData.history || []),
-        { date: new Date().toISOString(), type: 'Scan', result: results.issue }
+        {
+          date: new Date().toISOString(),
+          type: 'AI Scan',
+          score: results.score,
+          issue: results.issue,
+          description: results.description,
+          recommendation: results.recommendation,
+          undertone: results.undertone,
+          seasonalPalette: results.seasonalPalette,
+          skinType: userData.skinType || 'Unknown',
+          factors: results.factors || []
+        }
       ]
     });
     setResults(prev => ({ ...prev, saved: true }));
