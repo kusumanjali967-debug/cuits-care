@@ -1,11 +1,13 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { User, Lock, ArrowLeft } from 'lucide-react';
+import { User, Lock, ArrowLeft, Eye, EyeOff } from 'lucide-react';
 import { useUser } from '../context/UserContext.jsx';
 import './Login.css';
 
 export default function Login() {
   const navigate = useNavigate();
   const { login } = useUser();
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -45,9 +47,29 @@ export default function Login() {
 
         <div className="input-group">
           <label>Password</label>
-          <div className="input-wrapper">
+          <div className="input-wrapper" style={{ position: 'relative' }}>
             <Lock size={20} className="input-icon" />
-            <input type="password" className="input-field with-icon" placeholder="••••••••" required />
+            <input
+              type={showPassword ? 'text' : 'password'}
+              className="input-field with-icon"
+              placeholder="••••••••"
+              required
+              style={{ paddingRight: '44px' }}
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(p => !p)}
+              style={{
+                position: 'absolute', right: '12px', top: '50%',
+                transform: 'translateY(-50%)', background: 'none',
+                border: 'none', cursor: 'pointer', color: 'var(--text-secondary)',
+                display: 'flex', alignItems: 'center', padding: '4px',
+                transition: 'color 0.2s'
+              }}
+              aria-label={showPassword ? 'Hide password' : 'Show password'}
+            >
+              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+            </button>
           </div>
         </div>
 
