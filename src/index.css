@@ -270,28 +270,29 @@ p {
   }
 }
 
-/* Floating Language Switcher Widget */
+/* Floating Language Switcher Widget — placed top-left to avoid overlapping bottom nav */
 .floating-lang-switcher {
   position: fixed;
-  top: 15px;
-  right: 15px;
+  top: 14px;
+  left: 14px;
   z-index: 9999;
 }
 .lang-select-dropdown {
-  padding: 8px 12px;
-  border-radius: 12px;
+  padding: 7px 10px;
+  border-radius: 20px;
   border: 1px solid var(--glass-border);
   background: var(--glass-bg);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   color: var(--text-primary);
   font-family: inherit;
   font-weight: 600;
-  font-size: 0.85rem;
+  font-size: 0.78rem;
   cursor: pointer;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.10);
   transition: var(--transition);
   outline: none;
+  max-width: 130px;
 }
 .lang-select-dropdown:hover {
   transform: scale(1.03);
