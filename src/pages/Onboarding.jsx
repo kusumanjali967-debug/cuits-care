@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, ArrowRight, Camera, RefreshCw, CheckCircle, X } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Camera, RefreshCw, CheckCircle, X, Mail, Lock, User, Eye, EyeOff, AlertCircle } from 'lucide-react';
 import { useUser } from '../context/UserContext';
 import { useLanguage } from '../context/LanguageContext';
 import './Onboarding.css';
@@ -36,14 +36,24 @@ function detectSkinToneFromCanvas(canvas) {
 
 export default function Onboarding() {
   const navigate = useNavigate();
-  const { updateUserData } = useUser();
+  const { updateUserData, register, authError, setAuthError } = useUser();
   const { t } = useLanguage();
 
-  const [step, setStep] = useState(1);
+  // ── Account creation state (step 0) ───────────────────────────────────────
+  const [regName, setRegName]               = useState('');
+  const [regEmail, setRegEmail]             = useState('');
+  const [regPassword, setRegPassword]       = useState('');
+  const [regConfirm, setRegConfirm]         = useState('');
+  const [showRegPw, setShowRegPw]           = useState(false);
+  const [showRegCf, setShowRegCf]           = useState(false);
+  const [regLoading, setRegLoading]         = useState(false);
+  const [regLocalErr, setRegLocalErr]       = useState('');
+
+  const [step, setStep] = useState(0);   // 0 = account creation
   const [knowsSkinType, setKnowsSkinType] = useState(null);
-  const [tempSkinType, setTempSkinType] = useState("");
-  const [tempIssues, setTempIssues] = useState([]);
-  const [answersList, setAnswersList] = useState([]);
+  const [tempSkinType, setTempSkinType]   = useState('');
+  const [tempIssues, setTempIssues]       = useState([]);
+  const [answersList, setAnswersList]     = useState([]);
 
   // Camera step state
   const [cameraStream, setCameraStream] = useState(null);
@@ -55,7 +65,7 @@ export default function Onboarding() {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
 
-  // totalSteps: unknown path = 9 (camera + 5 questions + issues), known path = 4 (camera + type + issues)
+  // totalSteps (skins steps only, not counting step 0)
   const totalSteps = knowsSkinType === false ? 9 : 4;
 
   useEffect(() => {
@@ -106,12 +116,35 @@ export default function Onboarding() {
     if (step > 1) {
       if (step === 2) { setKnowsSkinType(null); setAnswersList([]); }
       else if (knowsSkinType === false && step > 2) setAnswersList(prev => prev.slice(0, -1));
-      // If going back to camera step, reset camera
       if (step === 2) { setCapturedImg(null); setSkinScanResult(null); setCameraSkipped(false); }
       setStep(s => s - 1);
+    } else if (step === 1) {
+      setStep(0); // Go back to account creation
     } else {
       navigate(-1);
     }
+  };
+
+  /* ── Handle account creation (step 0) ────────────────────────────────── */
+  const handleRegister = async (e) => {
+    e.preventDefault();
+    setRegLocalErr('');
+    setAuthError('');
+
+    if (!regName.trim())  { setRegLocalErr('Please enter your name.'); return; }
+    if (!regEmail.trim()) { setRegLocalErr('Please enter your email.'); return; }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(regEmail)) { setRegLocalErr('Please enter a valid email address.'); return; }
+    if (regPassword.length < 6) { setRegLocalErr('Password must be at least 6 characters.'); return; }
+    if (regPassword !== regConfirm) { setRegLocalErr('Passwords do not match.'); return; }
+
+    setRegLoading(true);
+    const result = await register(regName.trim(), regEmail.trim().toLowerCase(), regPassword);
+    setRegLoading(false);
+
+    if (result) {
+      setStep(1); // proceed to skin quiz
+    }
+    // authError is set inside register() on failure (e.g. email already exists)
   };
 
   const selectSkinType = (type) => { setTempSkinType(type); handleNext(); };
@@ -178,14 +211,100 @@ export default function Onboarding() {
         <button className="icon-btn hover-lift" onClick={handleBack} aria-label="Go back">
           <ArrowLeft size={24} />
         </button>
-        <div className="progress-bar">
-          <div className="progress-fill" style={{ width: `${(step / totalSteps) * 100}%` }}></div>
-        </div>
+        {step > 0 && (
+          <div className="progress-bar">
+            <div className="progress-fill" style={{ width: `${(step / totalSteps) * 100}%` }} />
+          </div>
+        )}
       </div>
 
       <div className="onboarding-content stack-y">
 
-        {/* ── STEP 1: Know your skin? ── */}
+        {/* ── STEP 0: Create Account ── */}
+        {step === 0 && (
+          <div className="step-card card-3d slide-up">
+            <h2 className="text-gradient">Create Your Account 🌸</h2>
+            <p style={{ color: 'var(--text-secondary)', marginBottom: 8 }}>Join Cuits Care to save your skin journey</p>
+
+            {/* Error */}
+            {(regLocalErr || authError) && (
+              <div className="fade-in" style={{
+                display: 'flex', alignItems: 'center', gap: 8,
+                padding: '10px 14px', borderRadius: 12,
+                background: 'rgba(244,67,54,0.08)', border: '1px solid rgba(244,67,54,0.25)',
+                color: '#f44336', fontSize: '0.85rem', fontWeight: 600, marginBottom: 4,
+              }}>
+                <AlertCircle size={16} />{regLocalErr || authError}
+              </div>
+            )}
+
+            <form onSubmit={handleRegister} style={{ display: 'flex', flexDirection: 'column', gap: 16 }} noValidate>
+              {/* Name */}
+              <div className="input-group">
+                <label>Full Name</label>
+                <div className="input-wrapper">
+                  <User size={18} className="input-icon" />
+                  <input type="text" className="input-field with-icon" placeholder="e.g. Kusumanjali"
+                    value={regName} onChange={e => setRegName(e.target.value)} autoComplete="name" required />
+                </div>
+              </div>
+
+              {/* Email */}
+              <div className="input-group">
+                <label>Email Address</label>
+                <div className="input-wrapper">
+                  <Mail size={18} className="input-icon" />
+                  <input type="email" className="input-field with-icon" placeholder="you@example.com"
+                    value={regEmail} onChange={e => setRegEmail(e.target.value)} autoComplete="email" required />
+                </div>
+              </div>
+
+              {/* Password */}
+              <div className="input-group">
+                <label>Password <span style={{ color: 'var(--text-secondary)', fontWeight: 400, fontSize: '0.78rem' }}>(min. 6 characters)</span></label>
+                <div className="input-wrapper" style={{ position: 'relative' }}>
+                  <Lock size={18} className="input-icon" />
+                  <input type={showRegPw ? 'text' : 'password'} className="input-field with-icon"
+                    placeholder="••••••••" value={regPassword} onChange={e => setRegPassword(e.target.value)}
+                    autoComplete="new-password" style={{ paddingRight: 40 }} required />
+                  <button type="button" onClick={() => setShowRegPw(p => !p)}
+                    style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-secondary)', display: 'flex' }}>
+                    {showRegPw ? <EyeOff size={16} /> : <Eye size={16} />}
+                  </button>
+                </div>
+              </div>
+
+              {/* Confirm Password */}
+              <div className="input-group">
+                <label>Confirm Password</label>
+                <div className="input-wrapper" style={{ position: 'relative' }}>
+                  <Lock size={18} className="input-icon" />
+                  <input type={showRegCf ? 'text' : 'password'} className="input-field with-icon"
+                    placeholder="••••••••" value={regConfirm} onChange={e => setRegConfirm(e.target.value)}
+                    autoComplete="new-password" style={{ paddingRight: 40, borderColor: regConfirm && regConfirm !== regPassword ? '#f44336' : '' }} required />
+                  <button type="button" onClick={() => setShowRegCf(p => !p)}
+                    style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-secondary)', display: 'flex' }}>
+                    {showRegCf ? <EyeOff size={16} /> : <Eye size={16} />}
+                  </button>
+                </div>
+                {regConfirm && regConfirm !== regPassword && (
+                  <p style={{ fontSize: '0.75rem', color: '#f44336', margin: '4px 0 0' }}>Passwords do not match</p>
+                )}
+              </div>
+
+              <button type="submit" className="btn-primary neon-glow" disabled={regLoading}
+                style={{ marginTop: 4 }}>
+                {regLoading ? '⏳ Creating account...' : '🌸 Create Account & Continue →'}
+              </button>
+            </form>
+
+            <p style={{ textAlign: 'center', fontSize: '0.82rem', color: 'var(--text-secondary)', marginTop: 12 }}>
+              Already have an account?{' '}
+              <span onClick={() => navigate('/login')}
+                style={{ color: 'var(--accent)', fontWeight: 700, cursor: 'pointer' }}>Log In</span>
+            </p>
+          </div>
+        )}
         {step === 1 && (
           <div className="step-card card-3d slide-up">
             <h2 className="text-gradient">{t('onboardingTitle')}</h2>
