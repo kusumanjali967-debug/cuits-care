@@ -1,4 +1,5 @@
 import { Routes, Route } from 'react-router-dom';
+import ThemeSwitcher from './components/ThemeSwitcher';
 import SplashPage from './pages/SplashPage';
 import Login from './pages/Login';
 import Profile from './pages/Profile';
@@ -22,6 +23,7 @@ import ColorPalette from './pages/ColorPalette';
 function App() {
   return (
     <div className="mobile-container">
+      <ThemeSwitcher />
       <Routes>
         <Route path="/" element={<SplashPage />} />
         <Route path="/login" element={<Login />} />

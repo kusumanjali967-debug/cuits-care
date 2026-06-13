@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Shield, Heart, Award, Sparkles, AlertTriangle, CheckCircle, Info, ShoppingBag, ExternalLink } from 'lucide-react';
+import { ArrowLeft, Shield, Heart, Award, Sparkles, AlertTriangle, CheckCircle, Info, ShoppingBag, ExternalLink, Search } from 'lucide-react';
 import { useUser } from '../context/UserContext';
 import { useLanguage } from '../context/LanguageContext';
+import PriceCompareLens from '../components/PriceCompareLens';
 import './Recommendations.css';
 
 // Generate Amazon India + Nykaa search URLs for a product name
@@ -16,6 +17,7 @@ export default function Recommendations() {
   const { userData } = useUser();
   const { t } = useLanguage();
   const [expandedBuy, setExpandedBuy] = useState(null);
+  const [lensProduct, setLensProduct] = useState(null);
 
   const skinType = userData.skinType || 'Unknown';
   const issues = userData.skinIssues || [];
@@ -217,8 +219,8 @@ export default function Recommendations() {
                     <span style={{ fontWeight: 700, fontSize: '0.75rem', color: 'var(--text-secondary)', textTransform: 'uppercase' }}>{t('routineDirections')}:</span>
                     <p style={{ margin: '2px 0 0 0', fontSize: '0.825rem', color: 'var(--text-secondary)' }}>{item.direction}</p>
                   </div>
-                  {/* Buy Now */}
-                  <div style={{ marginTop: '10px', display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                  {/* Buy Now + Price Compare */}
+                  <div style={{ marginTop: '10px', display: 'flex', gap: '8px', flexWrap: 'wrap', alignItems: 'center' }}>
                     <a href={links.amazon} target="_blank" rel="noopener noreferrer"
                       style={{ display: 'flex', alignItems: 'center', gap: '5px', padding: '6px 12px', borderRadius: '12px', background: '#ff9900', color: '#fff', fontSize: '0.75rem', fontWeight: 700, textDecoration: 'none' }}>
                       <ShoppingBag size={12} /> Amazon
@@ -227,6 +229,11 @@ export default function Recommendations() {
                       style={{ display: 'flex', alignItems: 'center', gap: '5px', padding: '6px 12px', borderRadius: '12px', background: '#fc2779', color: '#fff', fontSize: '0.75rem', fontWeight: 700, textDecoration: 'none' }}>
                       <ExternalLink size={12} /> Nykaa
                     </a>
+                    <button
+                      onClick={() => setLensProduct(item.name)}
+                      style={{ display: 'flex', alignItems: 'center', gap: '5px', padding: '6px 12px', borderRadius: '12px', background: 'var(--accent-gradient)', color: '#fff', fontSize: '0.75rem', fontWeight: 700, border: 'none', cursor: 'pointer' }}>
+                      <Search size={12} /> Compare Prices
+                    </button>
                   </div>
                 </div>
               );
@@ -255,7 +262,7 @@ export default function Recommendations() {
                     <span style={{ fontWeight: 700, fontSize: '0.75rem', color: 'var(--text-secondary)', textTransform: 'uppercase' }}>{t('routineDirections')}:</span>
                     <p style={{ margin: '2px 0 0 0', fontSize: '0.825rem', color: 'var(--text-secondary)' }}>{item.direction}</p>
                   </div>
-                  <div style={{ marginTop: '10px', display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                  <div style={{ marginTop: '10px', display: 'flex', gap: '8px', flexWrap: 'wrap', alignItems: 'center' }}>
                     <a href={links.amazon} target="_blank" rel="noopener noreferrer"
                       style={{ display: 'flex', alignItems: 'center', gap: '5px', padding: '6px 12px', borderRadius: '12px', background: '#ff9900', color: '#fff', fontSize: '0.75rem', fontWeight: 700, textDecoration: 'none' }}>
                       <ShoppingBag size={12} /> Amazon
@@ -264,6 +271,11 @@ export default function Recommendations() {
                       style={{ display: 'flex', alignItems: 'center', gap: '5px', padding: '6px 12px', borderRadius: '12px', background: '#fc2779', color: '#fff', fontSize: '0.75rem', fontWeight: 700, textDecoration: 'none' }}>
                       <ExternalLink size={12} /> Nykaa
                     </a>
+                    <button
+                      onClick={() => setLensProduct(item.name)}
+                      style={{ display: 'flex', alignItems: 'center', gap: '5px', padding: '6px 12px', borderRadius: '12px', background: 'var(--accent-gradient)', color: '#fff', fontSize: '0.75rem', fontWeight: 700, border: 'none', cursor: 'pointer' }}>
+                      <Search size={12} /> Compare Prices
+                    </button>
                   </div>
                 </div>
               );
@@ -286,9 +298,13 @@ export default function Recommendations() {
                     <p style={{ margin: 0, fontWeight: 600, fontSize: '0.88rem' }}>{item.name}</p>
                     <p style={{ margin: 0, fontSize: '0.75rem', color: 'var(--text-secondary)' }}>{item.step}</p>
                   </div>
-                  <div style={{ display: 'flex', gap: '6px' }}>
+                  <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
                     <a href={links.amazon} target="_blank" rel="noopener noreferrer" style={{ padding: '5px 10px', borderRadius: '10px', background: '#ff9900', color: '#fff', fontSize: '0.72rem', fontWeight: 700, textDecoration: 'none' }}>Amazon</a>
                     <a href={links.nykaa} target="_blank" rel="noopener noreferrer" style={{ padding: '5px 10px', borderRadius: '10px', background: '#fc2779', color: '#fff', fontSize: '0.72rem', fontWeight: 700, textDecoration: 'none' }}>Nykaa</a>
+                    <button onClick={() => setLensProduct(item.name)}
+                      style={{ padding: '5px 10px', borderRadius: '10px', background: 'var(--accent-gradient)', color: '#fff', fontSize: '0.72rem', fontWeight: 700, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      <Search size={11} /> Compare
+                    </button>
                   </div>
                 </div>
               );
@@ -326,6 +342,9 @@ export default function Recommendations() {
           </p>
         </div>
       </div>
+      {lensProduct && (
+        <PriceCompareLens productName={lensProduct} onClose={() => setLensProduct(null)} />
+      )}
     </div>
   );
 }

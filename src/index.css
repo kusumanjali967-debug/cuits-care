@@ -299,45 +299,135 @@ p {
   border-color: var(--accent);
 }
 
-/* 3D card tilt & hover effects */
+/* ─── ENHANCED 3D Card Effects ──────────────────────────────────────────── */
 .card-3d {
   transform-style: preserve-3d;
-  perspective: 1000px;
-  transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.4s ease;
+  perspective: 1200px;
+  transition: transform 0.45s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.45s ease;
+  will-change: transform;
 }
 .card-3d:hover {
-  transform: translateY(-8px) rotateX(4deg) rotateY(-4deg) scale(1.02);
-  box-shadow: 0 20px 40px rgba(216, 140, 125, 0.2);
+  transform: translateY(-10px) rotateX(5deg) rotateY(-4deg) scale(1.025);
+  box-shadow: 0 24px 50px rgba(216, 140, 125, 0.22),
+              0 6px 16px rgba(0,0,0,0.06);
 }
-@media (prefers-color-scheme: dark) {
-  .card-3d:hover {
-    box-shadow: 0 20px 40px rgba(0,0,0,0.5);
-  }
+.card-3d::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(135deg, rgba(255,255,255,0.18) 0%, transparent 60%);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  z-index: 1;
 }
+.card-3d:hover::before { opacity: 1; }
 
-/* Generic Modal Styles */
-.modal-overlay {
-  position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0,0,0,0.4);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  z-index: 1000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
+/* Flip card — add .flip-card > .flip-inner > .flip-front + .flip-back */
+.flip-card {
+  perspective: 1000px;
 }
-.modal-card {
-  background: var(--bg-secondary);
-  border: 1px solid var(--glass-border);
-  box-shadow: 0 20px 50px rgba(0,0,0,0.25);
-  border-radius: var(--radius-md);
-  width: 100%;
-  max-width: 480px;
-  padding: 28px;
-  max-height: 90vh;
-  overflow-y: auto;
+.flip-inner {
   position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.65s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.flip-card:hover .flip-inner { transform: rotateY(180deg); }
+.flip-front, .flip-back {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  border-radius: inherit;
+}
+.flip-back { transform: rotateY(180deg); }
+
+/* Floating glow orbs background on cards */
+.glow-card {
+  position: relative;
+  overflow: hidden;
+}
+.glow-card::after {
+  content: '';
+  position: absolute;
+  width: 120px; height: 120px;
+  background: radial-gradient(circle, var(--particle-color, rgba(216,140,125,0.35)) 0%, transparent 70%);
+  border-radius: 50%;
+  top: -30px; right: -30px;
+  pointer-events: none;
+  transition: all 0.5s ease;
+  filter: blur(18px);
+}
+.glow-card:hover::after {
+  width: 180px; height: 180px;
+  top: -50px; right: -50px;
+  opacity: 0.8;
 }
 
+/* ─── Shimmer animation (used in PriceCompareLens) ─────────────────────── */
+@keyframes shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position:  200% center; }
+}
+
+/* ─── Neon accent glow on focus / active elements ───────────────────────── */
+.neon-glow {
+  box-shadow: 0 0 0 0 var(--accent);
+  transition: box-shadow 0.3s ease;
+}
+.neon-glow:focus,
+.neon-glow:hover {
+  box-shadow: 0 0 12px 3px var(--particle-color, rgba(216,140,125,0.4)),
+              0 0 30px 8px var(--particle-color, rgba(216,140,125,0.2));
+}
+
+/* ─── Depth shadow levels ────────────────────────────────────────────────── */
+.shadow-sm  { box-shadow: 0 2px 8px  rgba(0,0,0,0.06); }
+.shadow-md  { box-shadow: 0 8px 24px rgba(0,0,0,0.08); }
+.shadow-lg  { box-shadow: 0 20px 50px rgba(0,0,0,0.12); }
+.shadow-accent { box-shadow: 0 8px 32px var(--particle-color, rgba(216,140,125,0.3)); }
+
+/* ─── Floating particle layer on body ───────────────────────────────────── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    radial-gradient(circle at 15% 25%, var(--particle-color, rgba(216,140,125,0.12)) 0%, transparent 40%),
+    radial-gradient(circle at 85% 75%, var(--particle-color, rgba(216,140,125,0.08)) 0%, transparent 40%),
+    radial-gradient(circle at 50% 50%, var(--particle-color, rgba(216,140,125,0.04)) 0%, transparent 60%);
+  pointer-events: none;
+  z-index: 0;
+  animation: particleDrift 12s ease-in-out infinite alternate;
+}
+@keyframes particleDrift {
+  0%   { transform: translate(0, 0)   scale(1); }
+  50%  { transform: translate(8px, -12px) scale(1.04); }
+  100% { transform: translate(-6px, 8px)  scale(0.97); }
+}
+
+/* ─── Button shimmer sweep on hover ─────────────────────────────────────── */
+.btn-primary::before {
+  content: '';
+  position: absolute;
+  top: 0; left: -75%;
+  width: 50%; height: 100%;
+  background: linear-gradient(120deg, transparent, rgba(255,255,255,0.3), transparent);
+  transform: skewX(-20deg);
+  transition: left 0.55s ease;
+  pointer-events: none;
+}
+.btn-primary:hover::before { left: 130%; }
+
+/* ─── Smooth theme transition on all elements ───────────────────────────── */
+*, *::before, *::after {
+  transition-property: background-color, border-color, color, box-shadow;
+  transition-duration: 0.35s;
+  transition-timing-function: ease;
+}
+/* override for transforms/opacity to avoid lag */
+.card-3d, .hover-lift, .btn-primary, .flip-inner {
+  transition-property: transform, box-shadow, opacity, background-color, border-color, color;
+}
