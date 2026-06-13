@@ -239,13 +239,13 @@ export default function Onboarding() {
             )}
 
             <form onSubmit={handleRegister} style={{ display: 'flex', flexDirection: 'column', gap: 16 }} noValidate>
-              {/* Name */}
+              {/* Username */}
               <div className="input-group">
-                <label>Full Name</label>
+                <label>Username</label>
                 <div className="input-wrapper">
                   <User size={18} className="input-icon" />
-                  <input type="text" className="input-field with-icon" placeholder="e.g. Kusumanjali"
-                    value={regName} onChange={e => setRegName(e.target.value)} autoComplete="name" required />
+                  <input type="text" className="input-field with-icon" placeholder="e.g. glowqueen99"
+                    value={regName} onChange={e => setRegName(e.target.value)} autoComplete="username" required />
                 </div>
               </div>
 
