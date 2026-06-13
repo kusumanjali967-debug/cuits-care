@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   User, Settings, LogOut, Heart, Clock,
-  Edit3, X, Check, Calendar, Camera, Bell, ExternalLink, Mail, Send, Key
+  Edit3, X, Check, Calendar, Camera, Bell, ExternalLink, Mail, Send, Key, ArrowLeft
 } from 'lucide-react';
 import BottomNav from '../components/BottomNav';
 import { useUser } from '../context/UserContext';
@@ -253,14 +253,23 @@ export default function Profile() {
             {/* handle */}
             <div style={{ width: '40px', height: '4px', background: 'var(--glass-border)', borderRadius: '2px', margin: '0 auto' }} />
 
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+              <button
+                onClick={() => setIsDermOpen(false)}
+                style={{
+                  background: 'var(--glass-bg)', border: '1px solid var(--glass-border)',
+                  borderRadius: '50%', width: '36px', height: '36px',
+                  cursor: 'pointer', display: 'flex', alignItems: 'center',
+                  justifyContent: 'center', color: 'var(--text-primary)', flexShrink: 0
+                }}
+                aria-label="Go back"
+              >
+                <ArrowLeft size={18} />
+              </button>
               <div>
                 <h3 style={{ margin: 0, fontSize: '1.2rem' }} className="text-gradient">Book a Dermatologist</h3>
                 <p style={{ margin: '4px 0 0', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Find specialists near you</p>
               </div>
-              <button onClick={() => setIsDermOpen(false)} style={{ background: 'var(--glass-bg)', border: '1px solid var(--glass-border)', borderRadius: '50%', width: '36px', height: '36px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-secondary)' }}>
-                <X size={18} />
-              </button>
             </div>
 
             {/* Quick links */}
@@ -326,9 +335,20 @@ export default function Profile() {
             className="glass-panel scale-in"
             style={{ width: '100%', maxWidth: '380px', padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px', background: 'var(--bg-secondary)', border: '1px solid var(--glass-border)', boxShadow: '0 20px 50px rgba(0,0,0,0.2)', borderRadius: '24px' }}
           >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+              <button
+                onClick={() => setIsSettingsOpen(false)}
+                style={{
+                  background: 'var(--glass-bg)', border: '1px solid var(--glass-border)',
+                  borderRadius: '50%', width: '36px', height: '36px',
+                  cursor: 'pointer', display: 'flex', alignItems: 'center',
+                  justifyContent: 'center', color: 'var(--text-primary)', flexShrink: 0
+                }}
+                aria-label="Go back"
+              >
+                <ArrowLeft size={18} />
+              </button>
               <h3 style={{ margin: 0, fontSize: '1.2rem' }} className="text-gradient">Settings</h3>
-              <button onClick={() => setIsSettingsOpen(false)} style={{ background: 'transparent', border: 'none', cursor: 'pointer', fontSize: '1.2rem', color: 'var(--text-secondary)', fontWeight: 'bold' }}>✕</button>
             </div>
 
             <div className="stack-y" style={{ gap: '16px', margin: '8px 0' }}>
