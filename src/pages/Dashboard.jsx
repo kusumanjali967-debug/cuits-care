@@ -152,6 +152,10 @@ export default function Dashboard() {
   const [isNotifOpen, setIsNotifOpen] = useState(false);
   const [notifCount, setNotifCount] = useState(1);
   const [isStylingModalOpen, setIsStylingModalOpen] = useState(false);
+  const [dismissed, setDismissed] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('cuitsCare_notif_dismissed') || '[]'); }
+    catch { return []; }
+  });
 
   const [waterLogged, setWaterLogged] = useState(() => {
     const saved = localStorage.getItem(`cuitsCare_water_${email}`);
@@ -1017,6 +1021,7 @@ export default function Dashboard() {
       {/* ════════ Notification Centre ════════ */}
       {isNotifOpen && (() => {
         // ── Build real notifications from live user data ──────────────────
+        // NOTE: no hooks here — dismissed state is at component level above
         const hour = new Date().getHours();
         const allNotifs = [];
 
@@ -1105,11 +1110,6 @@ export default function Dashboard() {
           tip:      { bg: 'var(--glass-bg)',        border: 'var(--glass-border)',  dot: 'var(--accent)' },
           reminder: { bg: 'rgba(156,39,176,0.08)', border: 'rgba(156,39,176,0.2)', dot: '#9c27b0' },
         };
-
-        const [dismissed, setDismissed] = useState(() => {
-          try { return JSON.parse(localStorage.getItem('cuitsCare_notif_dismissed') || '[]'); }
-          catch { return []; }
-        });
 
         const visible = allNotifs.filter(n => !dismissed.includes(n.id));
 
