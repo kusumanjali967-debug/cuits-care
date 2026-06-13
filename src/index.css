@@ -431,3 +431,36 @@ body::before {
 .card-3d, .hover-lift, .btn-primary, .flip-inner {
   transition-property: transform, box-shadow, opacity, background-color, border-color, color;
 }
+
+/* Modals */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 2000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.modal-card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--card-shadow);
+  width: 100%;
+  max-width: 440px;
+  position: relative;
+  overflow: hidden;
+  animation: scaleIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@media (prefers-color-scheme: dark) {
+  .modal-overlay {
+    background-color: rgba(0, 0, 0, 0.7);
+  }
+}
+

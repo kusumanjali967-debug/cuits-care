@@ -19,6 +19,8 @@ import PhotoJournal from './pages/PhotoJournal';
 import IngredientSearch from './pages/IngredientSearch';
 import SkinChat from './pages/SkinChat';
 import ColorPalette from './pages/ColorPalette';
+import Settings from './pages/Settings';
+import DermatologistFinder from './pages/DermatologistFinder';
 
 function App() {
   return (
@@ -34,6 +36,8 @@ function App() {
         <Route path="/profile/issues" element={<MySkinIssues />} />
         <Route path="/profile/products" element={<MyCurrentProducts />} />
         <Route path="/profile/history" element={<MyScanHistory />} />
+        <Route path="/profile/settings" element={<Settings />} />
+        <Route path="/profile/dermatologist" element={<DermatologistFinder />} />
         <Route path="/routine/edit" element={<EditRoutine />} />
         <Route path="/circadian" element={<CircadianClock />} />
         <Route path="/compatibility" element={<IngredientScanner />} />

@@ -150,7 +150,6 @@ export default function Dashboard() {
   const [envData, setEnvData] = useState({ temp: '--', uv: '--', city: 'Locating...', humidity: '--', loading: true });
   const [toast, setToast] = useState(null);
   const [isNotifOpen, setIsNotifOpen] = useState(false);
-  const [notifCount, setNotifCount] = useState(1);
   const [isStylingModalOpen, setIsStylingModalOpen] = useState(false);
   const [dismissed, setDismissed] = useState(() => {
     try { return JSON.parse(localStorage.getItem('cuitsCare_notif_dismissed') || '[]'); }
@@ -280,16 +279,15 @@ export default function Dashboard() {
     const updated = allNotifs.map(n => n.id);
     setDismissed(updated);
     localStorage.setItem('cuitsCare_notif_dismissed', JSON.stringify(updated));
-    setNotifCount(0);
     setIsNotifOpen(false);
   };
 
   const notifTagColors = {
-    warning:  { bg: 'rgba(255,152,0,0.1)',   border: 'rgba(255,152,0,0.3)',   dot: '#ff9800' },
-    routine:  { bg: 'rgba(33,150,243,0.08)', border: 'rgba(33,150,243,0.2)',  dot: '#2196f3' },
-    success:  { bg: 'rgba(76,175,80,0.08)',  border: 'rgba(76,175,80,0.2)',   dot: '#4caf50' },
-    tip:      { bg: 'var(--glass-bg)',        border: 'var(--glass-border)',   dot: 'var(--accent)' },
-    reminder: { bg: 'rgba(156,39,176,0.08)', border: 'rgba(156,39,176,0.2)',  dot: '#9c27b0' },
+    warning:  { bg: 'rgba(255,152,0,0.1)',   border: 'rgba(255,152,0,0.3)',   dot: '#ff9800', dotBg: 'rgba(255,152,0,0.13)' },
+    routine:  { bg: 'rgba(33,150,243,0.08)', border: 'rgba(33,150,243,0.2)',  dot: '#2196f3', dotBg: 'rgba(33,150,243,0.13)' },
+    success:  { bg: 'rgba(76,175,80,0.08)',  border: 'rgba(76,175,80,0.2)',   dot: '#4caf50', dotBg: 'rgba(76,175,80,0.13)' },
+    tip:      { bg: 'var(--glass-bg)',        border: 'var(--glass-border)',   dot: 'var(--accent)', dotBg: 'var(--accent-light)' },
+    reminder: { bg: 'rgba(156,39,176,0.08)', border: 'rgba(156,39,176,0.2)',  dot: '#9c27b0', dotBg: 'rgba(156,39,176,0.13)' },
   };
 
 
@@ -592,7 +590,7 @@ export default function Dashboard() {
         </div>
         <button className="icon-btn notif-btn" onClick={() => setIsNotifOpen(true)}>
           <Bell size={24} />
-          {notifCount > 0 && <span className="notif-badge">{notifCount}</span>}
+          {visibleNotifs.length > 0 && <span className="notif-badge">{visibleNotifs.length}</span>}
         </button>
       </div>
 
@@ -1114,7 +1112,7 @@ export default function Dashboard() {
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 6 }}>
                           <span style={{ fontWeight: 700, fontSize: '0.88rem', lineHeight: 1.3 }}>{n.title}</span>
                           <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
-                            <span style={{ fontSize: '0.68rem', fontWeight: 700, padding: '2px 7px', borderRadius: 8, background: c.dot + '22', color: c.dot }}>{n.time}</span>
+                            <span style={{ fontSize: '0.68rem', fontWeight: 700, padding: '2px 7px', borderRadius: 8, background: c.dotBg, color: c.dot }}>{n.time}</span>
                             <button onClick={() => dismissOne(n.id)}
                               style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-secondary)', fontSize: '1rem', lineHeight: 1, padding: 0 }}>×</button>
                           </div>
