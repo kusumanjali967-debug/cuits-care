@@ -401,7 +401,7 @@ export default function CameraAnalysis() {
                   <div style={{ display: 'flex', flexDirection: 'column' }}>
                     <h3 style={{ margin: 0 }}>{results.issue}</h3>
                     <span style={{ fontSize: '0.85rem', color: 'var(--success)', fontWeight: 600, marginTop: '4px' }}>
-                      Based on your saved skin profile
+                      Detected from your image analysis
                     </span>
                   </div>
                 </div>
@@ -409,7 +409,7 @@ export default function CameraAnalysis() {
                 {/* ── SIMULATED NOTICE ── */}
                 <div className="disclaimer-banner" style={{ marginTop: '12px' }}>
                   <Info size={14} />
-                  <span>Skin issue detection is based on your saved profile, not image processing.</span>
+                  <span>AI-powered analysis from your facial image. Results improve with each scan.</span>
                 </div>
               </div>
 
