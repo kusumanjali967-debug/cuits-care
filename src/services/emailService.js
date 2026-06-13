@@ -10,24 +10,21 @@
  * ───────────────────────────────────────────────────────────────────────────
  */
 
-// ── ACCESS KEY — read from localStorage so user can set it in Settings ──────
-// Go to Settings → Email Notifications → paste your key there.
-// Or paste it directly here: 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx'
-const getAccessKey = () =>
-  localStorage.getItem('cuitsCare_email_key') || 'YOUR_ACCESS_KEY_HERE';
+// ── ACCESS KEY (hardcoded — works for all users automatically) ──────────────
+const WEB3FORMS_ACCESS_KEY = 'ae8599fe-47b1-48a8-a4a7-90934b9b6bd6';
 // ────────────────────────────────────────────────────────────────────────────
 
-const isConfigured = () => getAccessKey() !== 'YOUR_ACCESS_KEY_HERE' && getAccessKey() !== '';
+const isConfigured = () => !!WEB3FORMS_ACCESS_KEY;
 
 /* Generic send via Web3Forms fetch API */
 async function sendEmail({ subject, body, toEmail, toName }) {
   if (!isConfigured()) {
-    console.info('[Email] Not configured. Go to Settings → Email Notifications → paste your Web3Forms key.');
+    console.info('[Email] Not configured.');
     return { skipped: true };
   }
 
   const formData = {
-    access_key: getAccessKey(),
+    access_key: WEB3FORMS_ACCESS_KEY,
     subject,
     from_name: 'Cuits Care 🌸',
     message: body,

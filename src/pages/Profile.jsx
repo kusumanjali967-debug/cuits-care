@@ -46,11 +46,7 @@ export default function Profile() {
   const [notifEnabled,    setNotifEnabled]   = useState(
     () => localStorage.getItem('cuitsCare_notif_enabled') === 'true'
   );
-  const [emailKey,    setEmailKey]    = useState(
-    () => localStorage.getItem('cuitsCare_email_key') || ''
-  );
   const [emailStatus, setEmailStatus] = useState('');  // '', 'sending', 'sent', 'error'
-  const [emailKeyDirty, setEmailKeyDirty] = useState(false);
 
   const fileInputRef = useRef(null);
 
@@ -366,64 +362,43 @@ export default function Profile() {
 
               {/* ── Email Notifications section ── */}
               <div style={{ borderTop: '1px solid var(--glass-border)', paddingTop: 14, display: 'flex', flexDirection: 'column', gap: 10 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 2 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                   <Mail size={16} color="var(--accent)" />
                   <p style={{ margin: 0, fontWeight: 700, fontSize: '0.88rem' }}>Email Notifications</p>
+                  <span style={{ marginLeft: 'auto', fontSize: '0.7rem', fontWeight: 700, padding: '2px 8px', borderRadius: 8, background: 'var(--accent-light)', color: 'var(--accent)' }}>
+                    ✅ Active
+                  </span>
                 </div>
 
                 {userData.email && (
-                  <p style={{ margin: 0, fontSize: '0.78rem', color: 'var(--text-secondary)' }}>
-                    📧 Sending to: <strong style={{ color: 'var(--text-primary)' }}>{userData.email}</strong>
+                  <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+                    📧 Notifications go to: <strong style={{ color: 'var(--text-primary)' }}>{userData.email}</strong>
                   </p>
                 )}
 
-                {/* Access key input */}
-                <div>
-                  <label style={{ fontSize: '0.78rem', fontWeight: 600, color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: 5, marginBottom: 6 }}>
-                    <Key size={13} /> Web3Forms Access Key
-                    <a href="https://web3forms.com" target="_blank" rel="noopener noreferrer"
-                      style={{ marginLeft: 'auto', fontSize: '0.7rem', color: 'var(--accent)', fontWeight: 700, display: 'flex', alignItems: 'center', gap: 3 }}>
-                      Get free key <ExternalLink size={10} />
-                    </a>
-                  </label>
-                  <div style={{ display: 'flex', gap: 8 }}>
-                    <input
-                      type="text"
-                      className="input-field"
-                      placeholder="Paste your access key here…"
-                      value={emailKey}
-                      onChange={e => { setEmailKey(e.target.value); setEmailKeyDirty(true); setEmailStatus(''); }}
-                      style={{ padding: '10px 14px', fontSize: '0.82rem', flex: 1 }}
-                    />
-                    {emailKeyDirty && (
-                      <button
-                        type="button"
-                        onClick={() => {
-                          localStorage.setItem('cuitsCare_email_key', emailKey);
-                          setEmailKeyDirty(false);
-                          setEmailStatus('saved');
-                          setTimeout(() => setEmailStatus(''), 2000);
-                        }}
-                        style={{ padding: '10px 14px', borderRadius: 10, background: 'var(--accent-gradient)', color: '#fff', border: 'none', cursor: 'pointer', fontSize: '0.8rem', fontWeight: 700, whiteSpace: 'nowrap' }}>
-                        Save Key
-                      </button>
-                    )}
-                  </div>
-                  {emailStatus === 'saved' && <p style={{ margin: '4px 0 0', fontSize: '0.75rem', color: 'var(--success)' }}>✅ Key saved!</p>}
+                {/* What emails you get */}
+                <div style={{ background: 'var(--glass-bg)', borderRadius: 12, padding: '10px 14px', border: '1px solid var(--glass-border)', display: 'flex', flexDirection: 'column', gap: 6 }}>
+                  {[
+                    { icon: '🌸', label: 'Welcome email on sign up' },
+                    { icon: '🔬', label: 'Skin scan result summary' },
+                    { icon: '⏰', label: 'Morning & evening reminders' },
+                    { icon: '💡', label: 'Weekly skin tips' },
+                  ].map(item => (
+                    <div key={item.label} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: '0.8rem' }}>
+                      <span>{item.icon}</span>
+                      <span style={{ color: 'var(--text-secondary)' }}>{item.label}</span>
+                    </div>
+                  ))}
                 </div>
 
-                {/* Test email button */}
+                {/* Test button */}
                 <button
                   type="button"
-                  disabled={!emailKey || emailStatus === 'sending'}
+                  disabled={emailStatus === 'sending' || !userData.email}
                   onClick={async () => {
-                    if (!emailKey) { alert('Please enter and save your Web3Forms access key first.'); return; }
-                    if (!userData.email) { alert('No email on your account. Please log in first.'); return; }
-                    // Temporarily override the key in emailService via localStorage
-                    localStorage.setItem('cuitsCare_email_key', emailKey);
+                    if (!userData.email) { alert('Please log in first.'); return; }
                     setEmailStatus('sending');
                     try {
-                      // Dynamic import to pick up the saved key
                       const { sendWelcomeEmail: send } = await import('../services/emailService');
                       const res = await send({ name: userData.name || 'Friend', email: userData.email });
                       setEmailStatus(res?.success ? 'sent' : 'error');
@@ -433,26 +408,19 @@ export default function Profile() {
                   style={{
                     display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
                     padding: '11px', borderRadius: 12,
-                    background: emailKey ? 'var(--accent-gradient)' : 'var(--glass-bg)',
-                    color: emailKey ? '#fff' : 'var(--text-secondary)',
-                    border: emailKey ? 'none' : '1px solid var(--glass-border)',
-                    cursor: emailKey ? 'pointer' : 'not-allowed',
-                    fontSize: '0.85rem', fontWeight: 700,
+                    background: 'var(--accent-gradient)', color: '#fff',
+                    border: 'none', cursor: 'pointer', fontSize: '0.85rem', fontWeight: 700,
+                    opacity: emailStatus === 'sending' ? 0.7 : 1,
                   }}
                 >
                   <Send size={15} />
                   {emailStatus === 'sending' ? '⏳ Sending…'
                    : emailStatus === 'sent'    ? '✅ Test Email Sent!'
-                   : emailStatus === 'error'   ? '❌ Failed — check your key'
+                   : emailStatus === 'error'   ? '❌ Failed — try again'
                    : '📨 Send Test Email'}
                 </button>
-
-                <p style={{ margin: 0, fontSize: '0.7rem', color: 'var(--text-secondary)', lineHeight: 1.4 }}>
-                  💡 How to get your free key: Go to{' '}
-                  <a href="https://web3forms.com" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)', fontWeight: 700 }}>web3forms.com</a>,
-                  enter your email → click Create Access Key → check your email → paste the key above. Free plan: 250 emails/month.
-                </p>
               </div>
+
 
               {/* Version */}
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 16px', background: 'rgba(0,0,0,0.02)', borderRadius: '12px', border: '1px solid var(--glass-border)', fontSize: '0.8rem' }}>
