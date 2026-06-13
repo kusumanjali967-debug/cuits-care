@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+﻿import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   User, Settings, LogOut, Heart, Clock,
@@ -9,7 +9,7 @@ import { useUser } from '../context/UserContext';
 import { sendWelcomeEmail } from '../services/emailService';
 import './Profile.css';
 
-/* ─── helpers ────────────────────────────────────────────────────────── */
+/* â”€â”€â”€ helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function scheduleRoutineReminders() {
   const now = new Date();
   const morning = new Date(now);
@@ -23,14 +23,14 @@ function scheduleRoutineReminders() {
       new Notification(title, { body, icon: '/logo192.png' });
     }
   };
-  setTimeout(() => fire('☀️ Morning Routine', 'Time for your morning skincare routine!'), morning - now);
-  setTimeout(() => fire('🌙 Evening Routine', "Don't forget your night skincare routine!"), evening - now);
+  setTimeout(() => fire('â˜€ï¸ Morning Routine', 'Time for your morning skincare routine!'), morning - now);
+  setTimeout(() => fire('ðŸŒ™ Evening Routine', "Don't forget your night skincare routine!"), evening - now);
 }
 
 const DERM_LINKS = [
-  { label: 'Practo',          emoji: '🏥', url: 'https://www.practo.com/dermatologist',                              color: '#2563eb' },
-  { label: 'Justdial',        emoji: '📞', url: 'https://www.justdial.com/search?q=dermatologist',                   color: '#f59e0b' },
-  { label: 'Apollo Hospitals', emoji: '⚕️', url: 'https://www.apollohospitals.com/find-a-doctor/dermatology/',       color: '#10b981' },
+  { label: 'Practo',          emoji: 'ðŸ¥', url: 'https://www.practo.com/dermatologist',                              color: '#2563eb' },
+  { label: 'Justdial',        emoji: 'ðŸ“ž', url: 'https://www.justdial.com/search?q=dermatologist',                   color: '#f59e0b' },
+  { label: 'Apollo Hospitals', emoji: 'âš•ï¸', url: 'https://www.apollohospitals.com/find-a-doctor/dermatology/',       color: '#10b981' },
 ];
 
 export default function Profile() {
@@ -98,7 +98,7 @@ export default function Profile() {
         setNotifEnabled(true);
         localStorage.setItem('cuitsCare_notif_enabled', 'true');
         scheduleRoutineReminders();
-        new Notification('🌸 Cuits Care', { body: 'Skincare reminders are now enabled!' });
+        new Notification('ðŸŒ¸ Cuits Care', { body: 'Skincare reminders are now enabled!' });
       } else {
         setNotifEnabled(false);
         localStorage.setItem('cuitsCare_notif_enabled', 'false');
@@ -124,7 +124,7 @@ export default function Profile() {
   return (
     <div className="profile-container pb-nav fade-in">
 
-      {/* ── Header ── */}
+      {/* â”€â”€ Header â”€â”€ */}
       <div className="profile-header pad-screen slide-up" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <h2>My Profile</h2>
         <button className="icon-btn hover-lift" onClick={() => setIsEditing(!isEditing)}>
@@ -134,7 +134,7 @@ export default function Profile() {
 
       <div className="pad-screen stack-y spacing-lg">
 
-        {/* ── Edit / View card ── */}
+        {/* â”€â”€ Edit / View card â”€â”€ */}
         {isEditing ? (
           <div className="glass-panel profile-card stack-y scale-in" style={{ alignItems: 'flex-start' }}>
             <h3>Edit Skin Profile</h3>
@@ -170,7 +170,7 @@ export default function Profile() {
         ) : (
           <div className="glass-panel profile-card slide-up hover-lift" style={{ animationDelay: '0.1s' }}>
 
-            {/* ── Clickable avatar ── */}
+            {/* â”€â”€ Clickable avatar â”€â”€ */}
             <div
               onClick={handlePhotoClick}
               title="Change profile photo"
@@ -214,7 +214,7 @@ export default function Profile() {
           </div>
         )}
 
-        {/* ── Menu ── */}
+        {/* â”€â”€ Menu â”€â”€ */}
         <div className="profile-menu stack-y slide-up" style={{ animationDelay: '0.2s' }}>
           <button className="menu-item glass-panel hover-lift" onClick={() => navigate('/profile/history')}>
             <div className="menu-icon-wrapper"><Clock size={20} /></div>
@@ -239,182 +239,147 @@ export default function Profile() {
         </div>
       </div>
 
-      {/* ════════ Dermatologist bottom-sheet modal ════════ */}
+      {/* â•â•â•â•â•â•â•â• Dermatologist â€” full page style (matches Scan History) â•â•â•â•â•â•â•â• */}
       {isDermOpen && (
-        <div
-          className="fade-in"
-          style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.45)', backdropFilter: 'blur(10px)', zIndex: 1000, display: 'flex', alignItems: 'flex-end', justifyContent: 'center' }}
-          onClick={(e) => { if (e.target === e.currentTarget) setIsDermOpen(false); }}
-        >
-          <div
-            className="glass-panel scale-in"
-            style={{ width: '100%', maxWidth: '480px', padding: '20px 24px 40px', display: 'flex', flexDirection: 'column', gap: '18px', background: 'var(--bg-secondary)', border: '1px solid var(--glass-border)', boxShadow: '0 -8px 40px rgba(0,0,0,0.2)', borderRadius: '28px 28px 0 0' }}
-          >
-            {/* handle */}
-            <div style={{ width: '40px', height: '4px', background: 'var(--glass-border)', borderRadius: '2px', margin: '0 auto' }} />
+        <div className="fade-in" style={{ position: 'fixed', inset: 0, background: 'var(--bg-primary)', zIndex: 1000, overflowY: 'auto' }}>
+          <div className="pad-screen" style={{ paddingTop: 40, paddingBottom: 80 }}>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-              <button
-                onClick={() => setIsDermOpen(false)}
-                style={{
-                  background: 'var(--glass-bg)', border: '1px solid var(--glass-border)',
-                  borderRadius: '50%', width: '36px', height: '36px',
-                  cursor: 'pointer', display: 'flex', alignItems: 'center',
-                  justifyContent: 'center', color: 'var(--text-primary)', flexShrink: 0
-                }}
-                aria-label="Go back"
-              >
-                <ArrowLeft size={18} />
+            {/* Header â€” identical to Scan History */}
+            <div style={{ marginBottom: 24 }}>
+              <button className="icon-btn" onClick={() => setIsDermOpen(false)}
+                style={{ background: 'transparent', border: 'none', cursor: 'pointer', marginBottom: 16, padding: 0 }}>
+                <ArrowLeft size={24} />
               </button>
-              <div>
-                <h3 style={{ margin: 0, fontSize: '1.2rem' }} className="text-gradient">Book a Dermatologist</h3>
-                <p style={{ margin: '4px 0 0', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Find specialists near you</p>
-              </div>
+              <h2 className="text-gradient" style={{ margin: '0 0 4px', fontSize: '1.5rem' }}>Find a Dermatologist ðŸ¥</h2>
+              <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Book an appointment with a specialist</p>
             </div>
 
-            {/* Quick links */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            {/* Quick links â€” glass-panel cards like scan history cards */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 14, marginBottom: 24 }}>
               {DERM_LINKS.map(link => (
-                <a
-                  key={link.label}
-                  href={link.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 18px', borderRadius: '16px', background: 'var(--glass-bg)', border: `1px solid ${link.color}33`, textDecoration: 'none', color: 'var(--text-primary)', fontWeight: 600, fontSize: '0.95rem', boxShadow: `0 2px 12px ${link.color}18`, transition: 'transform 0.18s ease, box-shadow 0.18s ease' }}
-                  onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = `0 6px 20px ${link.color}30`; }}
-                  onMouseLeave={e => { e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = `0 2px 12px ${link.color}18`; }}
-                >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                    <span style={{ fontSize: '1.4rem' }}>{link.emoji}</span>
-                    <span>{link.label}</span>
+                <a key={link.label} href={link.url} target="_blank" rel="noopener noreferrer"
+                  className="glass-panel hover-lift"
+                  style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 18px', borderRadius: 18, border: `1.5px solid ${link.color}44`, textDecoration: 'none', color: 'var(--text-primary)', transition: 'all 0.3s ease' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+                    <div style={{ width: 48, height: 48, borderRadius: 14, background: link.color + '18', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.5rem', flexShrink: 0 }}>
+                      {link.emoji}
+                    </div>
+                    <div>
+                      <p style={{ margin: 0, fontWeight: 700, fontSize: '0.95rem' }}>{link.label}</p>
+                      <p style={{ margin: '2px 0 0', fontSize: '0.78rem', color: 'var(--text-secondary)' }}>Tap to search dermatologists</p>
+                    </div>
                   </div>
-                  <ExternalLink size={16} color={link.color} />
+                  <ExternalLink size={18} color={link.color} />
                 </a>
               ))}
             </div>
 
-            <div style={{ height: '1px', background: 'var(--glass-border)' }} />
-
-            {/* Reminder section */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-              <p style={{ margin: 0, fontWeight: 700, fontSize: '0.88rem', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <Bell size={15} color="var(--accent)" /> Appointment Reminder
+            {/* Appointment Reminder â€” glass-panel card */}
+            <div className="glass-panel" style={{ borderRadius: 18, padding: '18px 20px', border: '1px solid var(--glass-border)' }}>
+              <p style={{ margin: '0 0 12px', fontWeight: 700, fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: 7 }}>
+                <Bell size={16} color="var(--accent)" /> Appointment Reminder
               </p>
               {savedReminder ? (
-                <div style={{ padding: '14px 16px', borderRadius: '14px', background: 'var(--accent-light)', border: '1px solid var(--accent)', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '8px' }}>
+                <div style={{ padding: '14px 16px', borderRadius: 14, background: 'var(--accent-light)', border: '1px solid var(--accent)', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 8 }}>
                   <div>
                     <p style={{ margin: 0, fontWeight: 600, fontSize: '0.88rem', color: 'var(--accent)' }}>Saved Reminder</p>
                     {savedReminder.text && <p style={{ margin: '4px 0 0', fontSize: '0.85rem' }}>{savedReminder.text}</p>}
-                    {savedReminder.date && <p style={{ margin: '4px 0 0', fontSize: '0.78rem', color: 'var(--text-secondary)' }}>📅 {new Date(savedReminder.date + 'T00:00:00').toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}</p>}
+                    {savedReminder.date && <p style={{ margin: '4px 0 0', fontSize: '0.78rem', color: 'var(--text-secondary)' }}>ðŸ“… {new Date(savedReminder.date + 'T00:00:00').toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}</p>}
                   </div>
                   <button onClick={handleClearReminder} style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--danger)', flexShrink: 0 }}>
                     <X size={16} />
                   </button>
                 </div>
               ) : (
-                <>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                   <input type="text" className="input-field" placeholder="e.g. Appointment with Dr. Sharma" value={reminderText} onChange={e => setReminderText(e.target.value)} style={{ padding: '12px 16px', fontSize: '0.9rem' }} />
                   <input type="date" className="input-field" value={reminderDate} onChange={e => setReminderDate(e.target.value)} style={{ padding: '12px 16px', fontSize: '0.9rem' }} />
-                  <button className="btn-primary hover-lift" onClick={handleSaveReminder} style={{ padding: '12px', fontSize: '0.9rem', borderRadius: '14px', minHeight: 'unset', fontWeight: 600 }}>
-                    <Check size={16} style={{ marginRight: '6px' }} /> Save Reminder
+                  <button className="btn-primary hover-lift" onClick={handleSaveReminder} style={{ padding: '12px', fontSize: '0.9rem', borderRadius: 14, minHeight: 'unset', fontWeight: 600 }}>
+                    <Check size={16} style={{ marginRight: 6 }} /> Save Reminder
                   </button>
-                </>
+                </div>
               )}
             </div>
           </div>
         </div>
       )}
 
-      {/* ════════ Settings Modal ════════ */}
+      {/* â•â•â•â•â•â•â•â• Settings â€” full page style (matches Scan History) â•â•â•â•â•â•â•â• */}
       {isSettingsOpen && (
-        <div
-          className="fade-in"
-          style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(8px)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}
-        >
-          <div
-            className="glass-panel scale-in"
-            style={{ width: '100%', maxWidth: '380px', padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px', background: 'var(--bg-secondary)', border: '1px solid var(--glass-border)', boxShadow: '0 20px 50px rgba(0,0,0,0.2)', borderRadius: '24px' }}
-          >
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-              <button
-                onClick={() => setIsSettingsOpen(false)}
-                style={{
-                  background: 'var(--glass-bg)', border: '1px solid var(--glass-border)',
-                  borderRadius: '50%', width: '36px', height: '36px',
-                  cursor: 'pointer', display: 'flex', alignItems: 'center',
-                  justifyContent: 'center', color: 'var(--text-primary)', flexShrink: 0
-                }}
-                aria-label="Go back"
-              >
-                <ArrowLeft size={18} />
+        <div className="fade-in" style={{ position: 'fixed', inset: 0, background: 'var(--bg-primary)', zIndex: 1000, overflowY: 'auto' }}>
+          <div className="pad-screen" style={{ paddingTop: 40, paddingBottom: 80 }}>
+
+            {/* Header */}
+            <div style={{ marginBottom: 24 }}>
+              <button className="icon-btn" onClick={() => setIsSettingsOpen(false)}
+                style={{ background: 'transparent', border: 'none', cursor: 'pointer', marginBottom: 16, padding: 0 }}>
+                <ArrowLeft size={24} />
               </button>
-              <h3 style={{ margin: 0, fontSize: '1.2rem' }} className="text-gradient">Settings</h3>
+              <h2 className="text-gradient" style={{ margin: '0 0 4px', fontSize: '1.5rem' }}>Settings âš™ï¸</h2>
+              <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Manage your profile and preferences</p>
             </div>
 
-            <div className="stack-y" style={{ gap: '16px', margin: '8px 0' }}>
-              {/* Name */}
-              <div className="input-group">
-                <label style={{ fontWeight: 600, fontSize: '0.85rem', display: 'block', marginBottom: '6px' }}>Profile Display Name</label>
-                <input type="text" className="input-field" value={tempName} onChange={(e) => setTempName(e.target.value)} placeholder="Your Name" style={{ padding: '12px 16px', fontSize: '0.95rem' }} />
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+
+              {/* Display Name card */}
+              <div className="glass-panel" style={{ borderRadius: 18, padding: '18px 20px', border: '1px solid var(--glass-border)' }}>
+                <p style={{ margin: '0 0 10px', fontWeight: 700, fontSize: '0.88rem', display: 'flex', alignItems: 'center', gap: 7 }}>
+                  <User size={15} color="var(--accent)" /> Display Name
+                </p>
+                <input type="text" className="input-field" value={tempName} onChange={e => setTempName(e.target.value)} placeholder="Your username" style={{ padding: '12px 16px', fontSize: '0.95rem' }} />
+                <button className="btn-primary" onClick={() => { updateUserData({ name: tempName.trim() || userData.name }); setIsSettingsOpen(false); }}
+                  style={{ marginTop: 12, padding: '11px', borderRadius: 12, fontSize: '0.9rem', minHeight: 'unset', fontWeight: 600, width: '100%' }}>
+                  Save Name
+                </button>
               </div>
 
-              {/* Notifications toggle */}
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '14px 16px', background: 'var(--glass-bg)', borderRadius: '14px', border: '1px solid var(--glass-border)', gap: '12px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flex: 1 }}>
-                  <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: notifEnabled ? 'var(--accent-light)' : 'rgba(0,0,0,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, transition: 'background 0.25s' }}>
-                    <Bell size={18} color={notifEnabled ? 'var(--accent)' : 'var(--text-secondary)'} />
+              {/* Skincare Reminders card */}
+              <div className="glass-panel" style={{ borderRadius: 18, padding: '18px 20px', border: '1px solid var(--glass-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12, flex: 1 }}>
+                  <div style={{ width: 44, height: 44, borderRadius: 12, background: notifEnabled ? 'var(--accent-light)' : 'var(--glass-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, transition: 'background 0.25s' }}>
+                    <Bell size={20} color={notifEnabled ? 'var(--accent)' : 'var(--text-secondary)'} />
                   </div>
                   <div>
-                    <p style={{ margin: 0, fontWeight: 600, fontSize: '0.85rem' }}>Skincare Reminders</p>
-                    <p style={{ margin: '2px 0 0', fontSize: '0.72rem', color: 'var(--text-secondary)' }}>
-                      {notifEnabled ? '🔔 On — 8 am & 9 pm nudges' : 'Get notified at 8 am & 9 pm'}
+                    <p style={{ margin: 0, fontWeight: 700, fontSize: '0.9rem' }}>Skincare Reminders</p>
+                    <p style={{ margin: '2px 0 0', fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
+                      {notifEnabled ? 'ðŸ”” On â€” nudges at 8 am & 9 pm' : 'Get notified at 8 am & 9 pm'}
                     </p>
                   </div>
                 </div>
-                {/* Animated pill toggle */}
-                <div
-                  onClick={() => handleNotifToggle(!notifEnabled)}
-                  style={{ width: '48px', height: '26px', borderRadius: '13px', background: notifEnabled ? 'var(--accent)' : 'var(--glass-border)', position: 'relative', cursor: 'pointer', flexShrink: 0, transition: 'background 0.25s ease' }}
-                >
-                  <span style={{ position: 'absolute', top: '3px', left: notifEnabled ? '25px' : '3px', width: '20px', height: '20px', borderRadius: '50%', background: '#fff', transition: 'left 0.25s ease', boxShadow: '0 1px 4px rgba(0,0,0,0.25)' }} />
+                <div onClick={() => handleNotifToggle(!notifEnabled)}
+                  style={{ width: 50, height: 28, borderRadius: 14, background: notifEnabled ? 'var(--accent)' : 'var(--glass-border)', position: 'relative', cursor: 'pointer', flexShrink: 0, transition: 'background 0.25s ease' }}>
+                  <span style={{ position: 'absolute', top: 4, left: notifEnabled ? 26 : 4, width: 20, height: 20, borderRadius: '50%', background: '#fff', transition: 'left 0.25s ease', boxShadow: '0 1px 4px rgba(0,0,0,0.25)' }} />
                 </div>
               </div>
 
-              {/* ── Email Notifications section ── */}
-              <div style={{ borderTop: '1px solid var(--glass-border)', paddingTop: 14, display: 'flex', flexDirection: 'column', gap: 10 }}>
+              {/* Email Notifications card */}
+              <div className="glass-panel" style={{ borderRadius: 18, padding: '18px 20px', border: '1px solid var(--glass-border)', display: 'flex', flexDirection: 'column', gap: 12 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <Mail size={16} color="var(--accent)" />
-                  <p style={{ margin: 0, fontWeight: 700, fontSize: '0.88rem' }}>Email Notifications</p>
-                  <span style={{ marginLeft: 'auto', fontSize: '0.7rem', fontWeight: 700, padding: '2px 8px', borderRadius: 8, background: 'var(--accent-light)', color: 'var(--accent)' }}>
-                    ✅ Active
-                  </span>
+                  <div style={{ width: 44, height: 44, borderRadius: 12, background: 'var(--accent-light)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    <Mail size={20} color="var(--accent)" />
+                  </div>
+                  <div>
+                    <p style={{ margin: 0, fontWeight: 700, fontSize: '0.9rem' }}>Email Notifications</p>
+                    {userData.email && <p style={{ margin: '2px 0 0', fontSize: '0.75rem', color: 'var(--text-secondary)' }}>ðŸ“§ {userData.email}</p>}
+                  </div>
+                  <span style={{ marginLeft: 'auto', fontSize: '0.7rem', fontWeight: 700, padding: '3px 10px', borderRadius: 8, background: 'var(--accent-light)', color: 'var(--accent)' }}>âœ… Active</span>
                 </div>
 
-                {userData.email && (
-                  <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
-                    📧 Notifications go to: <strong style={{ color: 'var(--text-primary)' }}>{userData.email}</strong>
-                  </p>
-                )}
-
-                {/* What emails you get */}
-                <div style={{ background: 'var(--glass-bg)', borderRadius: 12, padding: '10px 14px', border: '1px solid var(--glass-border)', display: 'flex', flexDirection: 'column', gap: 6 }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
                   {[
-                    { icon: '🌸', label: 'Welcome email on sign up' },
-                    { icon: '🔬', label: 'Skin scan result summary' },
-                    { icon: '⏰', label: 'Morning & evening reminders' },
-                    { icon: '💡', label: 'Weekly skin tips' },
+                    { icon: 'ðŸŒ¸', label: 'Welcome email on sign up' },
+                    { icon: 'ðŸ”¬', label: 'Skin scan result summary' },
+                    { icon: 'â°', label: 'Morning & evening reminders' },
+                    { icon: 'ðŸ’¡', label: 'Weekly skin tips' },
                   ].map(item => (
-                    <div key={item.label} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: '0.8rem' }}>
+                    <div key={item.label} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: '0.82rem', padding: '6px 0', borderBottom: '1px solid var(--glass-border)' }}>
                       <span>{item.icon}</span>
                       <span style={{ color: 'var(--text-secondary)' }}>{item.label}</span>
                     </div>
                   ))}
                 </div>
 
-                {/* Test button */}
-                <button
-                  type="button"
-                  disabled={emailStatus === 'sending' || !userData.email}
+                <button type="button" disabled={emailStatus === 'sending' || !userData.email}
                   onClick={async () => {
                     if (!userData.email) { alert('Please log in first.'); return; }
                     setEmailStatus('sending');
@@ -425,42 +390,21 @@ export default function Profile() {
                     } catch { setEmailStatus('error'); }
                     setTimeout(() => setEmailStatus(''), 4000);
                   }}
-                  style={{
-                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
-                    padding: '11px', borderRadius: 12,
-                    background: 'var(--accent-gradient)', color: '#fff',
-                    border: 'none', cursor: 'pointer', fontSize: '0.85rem', fontWeight: 700,
-                    opacity: emailStatus === 'sending' ? 0.7 : 1,
-                  }}
-                >
+                  style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, padding: '11px', borderRadius: 12, background: 'var(--accent-gradient)', color: '#fff', border: 'none', cursor: 'pointer', fontSize: '0.85rem', fontWeight: 700, opacity: emailStatus === 'sending' ? 0.7 : 1 }}>
                   <Send size={15} />
-                  {emailStatus === 'sending' ? '⏳ Sending…'
-                   : emailStatus === 'sent'    ? '✅ Test Email Sent!'
-                   : emailStatus === 'error'   ? '❌ Failed — try again'
-                   : '📨 Send Test Email'}
+                  {emailStatus === 'sending' ? 'â³ Sendingâ€¦' : emailStatus === 'sent' ? 'âœ… Test Email Sent!' : emailStatus === 'error' ? 'âŒ Failed â€” try again' : 'ðŸ“¨ Send Test Email'}
                 </button>
               </div>
 
-
-              {/* Version */}
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 16px', background: 'rgba(0,0,0,0.02)', borderRadius: '12px', border: '1px solid var(--glass-border)', fontSize: '0.8rem' }}>
-                <span style={{ color: 'var(--text-secondary)' }}>Version</span>
-                <span style={{ fontWeight: 600 }}>v1.2.0 (Stable)</span>
+              {/* Version card */}
+              <div className="glass-panel" style={{ borderRadius: 18, padding: '16px 20px', border: '1px solid var(--glass-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: '0.88rem' }}>App Version</p>
+                <span style={{ fontWeight: 700, fontSize: '0.88rem' }}>v1.2.0 âœ¨</span>
               </div>
             </div>
-
-            <button
-              className="btn-primary"
-              onClick={() => { updateUserData({ name: tempName.trim() || userData.name }); setIsSettingsOpen(false); }}
-              style={{ padding: '12px', borderRadius: '12px', fontSize: '0.9rem', minHeight: 'unset', fontWeight: 600 }}
-            >
-              Save Settings
-            </button>
           </div>
         </div>
       )}
-
-
 
       <BottomNav />
     </div>
