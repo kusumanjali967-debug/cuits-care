@@ -1014,62 +1014,191 @@ export default function Dashboard() {
         </section>
       </div>
 
-      {/* Notifications Modal */}
-      {isNotifOpen && (
-        <div className="modal-overlay fade-in">
-          <div className="modal-card scale-in">
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-              <h3 style={{ margin: 0, fontSize: '1.2rem' }} className="text-gradient">Notifications</h3>
-              <button
-                onClick={() => setIsNotifOpen(false)}
-                style={{ background: 'transparent', border: 'none', cursor: 'pointer', fontSize: '1.2rem', color: 'var(--text-secondary)', fontWeight: 'bold' }}
-              >
-                ✕
-              </button>
+      {/* ════════ Notification Centre ════════ */}
+      {isNotifOpen && (() => {
+        // ── Build real notifications from live user data ──────────────────
+        const hour = new Date().getHours();
+        const allNotifs = [];
+
+        // 1. UV alert from live weather
+        if (envData.uv !== '--') {
+          const uv = parseFloat(envData.uv);
+          if (uv >= 6) allNotifs.push({
+            id: 'uv', icon: '☀️',
+            title: `High UV Alert — Index ${uv}`,
+            body:  'Apply SPF 50+ before going outdoors. Reapply every 2 hours.',
+            tag:   'warning', time: 'Now',
+          });
+        }
+
+        // 2. Routine reminder based on time
+        const routineArr = hour >= 17 || hour < 4 ? (userData.nightRoutine || []) : (userData.morningRoutine || []);
+        const done  = routineArr.filter(r => r.completed).length;
+        const total = routineArr.length;
+        if (total > 0 && done < total) allNotifs.push({
+          id: 'routine', icon: hour >= 17 || hour < 4 ? '🌙' : '☀️',
+          title: `${hour >= 17 || hour < 4 ? 'Night' : 'Morning'} Routine — ${done}/${total} done`,
+          body:  `You have ${total - done} step${total - done > 1 ? 's' : ''} left. Complete your routine to keep your streak!`,
+          tag:   'routine', time: 'Today',
+        });
+        if (total > 0 && done === total) allNotifs.push({
+          id: 'routine-done', icon: '✅',
+          title: 'Routine Complete! 🎉',
+          body:  `All ${total} steps done. Streak is safe for today!`,
+          tag:   'success', time: 'Today',
+        });
+
+        // 3. Hydration check
+        const water = userData.waterLog ?? userData.waterToday ?? 0;
+        if (water < 6) allNotifs.push({
+          id: 'water', icon: '💧',
+          title: `Hydration: ${water}/8 cups`,
+          body:  'Low hydration affects your skin barrier. Drink more water throughout the day.',
+          tag:   'tip', time: 'Today',
+        });
+
+        // 4. Streak milestone
+        if (streakCount > 0) allNotifs.push({
+          id: 'streak', icon: '🔥',
+          title: `${streakCount}-Day Streak!`,
+          body:  getStreakMessage(streakCount) + ' Keep going for glowing skin results.',
+          tag:   'success', time: 'Today',
+        });
+
+        // 5. No scan in last 7 days
+        const lastScan = (userData.history || []).slice(-1)[0];
+        const daysSinceScan = lastScan
+          ? Math.floor((Date.now() - new Date(lastScan.date)) / 86400000)
+          : 999;
+        if (daysSinceScan >= 7) allNotifs.push({
+          id: 'scan', icon: '🔬',
+          title: 'Skin Scan Due',
+          body:  daysSinceScan >= 999
+            ? 'You have not taken a skin scan yet. Try the AI Skin Scan now!'
+            : `Last scan was ${daysSinceScan} days ago. Take a new scan to track your progress.`,
+          tag:   'reminder', time: `${daysSinceScan >= 999 ? 'Never' : daysSinceScan + 'd ago'}`,
+        });
+
+        // 6. Humidity skin advice (from weather)
+        if (envData.humidity !== '--') {
+          const hum = parseFloat(envData.humidity);
+          if (hum < 30) allNotifs.push({
+            id: 'humidity', icon: '🌵',
+            title: 'Low Humidity Alert',
+            body:  'Air is very dry today. Apply extra moisturiser to prevent dehydration.',
+            tag:   'tip', time: 'Now',
+          });
+        }
+
+        // 7. Weekly skin tip
+        allNotifs.push({
+          id: 'tip', icon: '💡',
+          title: `Tip for ${userData.skinType || 'Your'} Skin`,
+          body:  getTimeTip(hour).tip,
+          tag:   'tip', time: 'Tip',
+        });
+
+        const tagColors = {
+          warning:  { bg: 'rgba(255,152,0,0.1)',  border: 'rgba(255,152,0,0.3)',  dot: '#ff9800' },
+          routine:  { bg: 'rgba(33,150,243,0.08)', border: 'rgba(33,150,243,0.2)', dot: '#2196f3' },
+          success:  { bg: 'rgba(76,175,80,0.08)',  border: 'rgba(76,175,80,0.2)',  dot: '#4caf50' },
+          tip:      { bg: 'var(--glass-bg)',        border: 'var(--glass-border)',  dot: 'var(--accent)' },
+          reminder: { bg: 'rgba(156,39,176,0.08)', border: 'rgba(156,39,176,0.2)', dot: '#9c27b0' },
+        };
+
+        const [dismissed, setDismissed] = useState(() => {
+          try { return JSON.parse(localStorage.getItem('cuitsCare_notif_dismissed') || '[]'); }
+          catch { return []; }
+        });
+
+        const visible = allNotifs.filter(n => !dismissed.includes(n.id));
+
+        const dismissOne = (id) => {
+          const updated = [...dismissed, id];
+          setDismissed(updated);
+          localStorage.setItem('cuitsCare_notif_dismissed', JSON.stringify(updated));
+        };
+
+        const dismissAll = () => {
+          const updated = allNotifs.map(n => n.id);
+          setDismissed(updated);
+          localStorage.setItem('cuitsCare_notif_dismissed', JSON.stringify(updated));
+          setNotifCount(0);
+          setIsNotifOpen(false);
+        };
+
+        return (
+          <div className="modal-overlay fade-in" onClick={() => setIsNotifOpen(false)}>
+            <div className="modal-card scale-in" onClick={e => e.stopPropagation()}
+              style={{ maxWidth: '400px', padding: '20px', maxHeight: '85vh', overflowY: 'auto' }}>
+
+              {/* Header */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
+                <button onClick={() => setIsNotifOpen(false)}
+                  style={{ background: 'var(--glass-bg)', border: '1px solid var(--glass-border)', borderRadius: '50%', width: 36, height: 36, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-primary)', flexShrink: 0 }}>
+                  <Bell size={18} />
+                </button>
+                <div style={{ flex: 1 }}>
+                  <h3 style={{ margin: 0, fontSize: '1.1rem' }} className="text-gradient">Notifications</h3>
+                  <p style={{ margin: 0, fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
+                    {visible.length} active · personalised for you
+                  </p>
+                </div>
+                {visible.length > 0 && (
+                  <button onClick={dismissAll}
+                    style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--accent)', background: 'none', border: 'none', cursor: 'pointer', whiteSpace: 'nowrap' }}>
+                    Clear all
+                  </button>
+                )}
+              </div>
+
+              {/* Notification list */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                {visible.length === 0 ? (
+                  <div style={{ textAlign: 'center', padding: '32px 16px', color: 'var(--text-secondary)' }}>
+                    <div style={{ fontSize: '2.5rem', marginBottom: 8 }}>🎉</div>
+                    <p style={{ margin: 0, fontWeight: 600 }}>All caught up!</p>
+                    <p style={{ margin: '4px 0 0', fontSize: '0.8rem' }}>No new notifications right now.</p>
+                  </div>
+                ) : visible.map(n => {
+                  const c = tagColors[n.tag] || tagColors.tip;
+                  return (
+                    <div key={n.id} style={{
+                      display: 'flex', gap: 10, padding: '12px 14px',
+                      background: c.bg, borderRadius: 14,
+                      border: `1px solid ${c.border}`,
+                      position: 'relative', overflow: 'hidden',
+                    }}>
+                      {/* left colour bar */}
+                      <div style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: 3, background: c.dot, borderRadius: '14px 0 0 14px' }} />
+                      <span style={{ fontSize: '1.3rem', flexShrink: 0, marginLeft: 4 }}>{n.icon}</span>
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 6 }}>
+                          <span style={{ fontWeight: 700, fontSize: '0.83rem', lineHeight: 1.3 }}>{n.title}</span>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
+                            <span style={{ fontSize: '0.68rem', color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>{n.time}</span>
+                            <button onClick={() => dismissOne(n.id)}
+                              style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-secondary)', fontSize: '0.9rem', lineHeight: 1, padding: 0 }}>×</button>
+                          </div>
+                        </div>
+                        <p style={{ margin: '3px 0 0', fontSize: '0.77rem', color: 'var(--text-secondary)', lineHeight: 1.4 }}>{n.body}</p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {visible.length > 0 && (
+                <button className="btn-primary" onClick={dismissAll}
+                  style={{ width: '100%', padding: '11px', borderRadius: 12, fontSize: '0.88rem', minHeight: 'unset', fontWeight: 600, marginTop: 14 }}>
+                  ✅ Mark All as Read
+                </button>
+              )}
             </div>
-
-            <div className="stack-y" style={{ gap: '12px', margin: '8px 0' }}>
-              <div style={{ display: 'flex', gap: '12px', padding: '12px', background: 'var(--glass-bg)', borderRadius: '12px', border: '1px solid var(--glass-border)' }}>
-                <span style={{ fontSize: '1.3rem' }}>☀️</span>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                  <span style={{ fontWeight: 700, fontSize: '0.85rem' }}>UV Index Warning</span>
-                  <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', margin: 0, lineHeight: 1.35 }}>
-                    UV levels are elevated at your location today. Protect your skin with sunscreen!
-                  </p>
-                </div>
-              </div>
-
-              <div style={{ display: 'flex', gap: '12px', padding: '12px', background: 'var(--glass-bg)', borderRadius: '12px', border: '1px solid var(--glass-border)' }}>
-                <span style={{ fontSize: '1.3rem' }}>🧴</span>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                  <span style={{ fontWeight: 700, fontSize: '0.85rem' }}>Skincare Reminder</span>
-                  <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', margin: 0, lineHeight: 1.35 }}>
-                    Time to perform your tailored {isNight ? 'Night' : 'Morning'} skincare routine!
-                  </p>
-                </div>
-              </div>
-
-              <div style={{ display: 'flex', gap: '12px', padding: '12px', background: 'var(--glass-bg)', borderRadius: '12px', border: '1px solid var(--glass-border)' }}>
-                <span style={{ fontSize: '1.3rem' }}>🥗</span>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                  <span style={{ fontWeight: 700, fontSize: '0.85rem' }}>Nutrition Tip</span>
-                  <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', margin: 0, lineHeight: 1.35 }}>
-                    Incorporate Vitamin C-rich foods today to boost antioxidants and skin brightness.
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <button
-              className="btn-primary"
-              onClick={() => { setNotifCount(0); setIsNotifOpen(false); }}
-              style={{ padding: '12px', borderRadius: '12px', fontSize: '0.9rem', minHeight: 'unset', fontWeight: 600, marginTop: '16px' }}
-            >
-              Mark All as Read
-            </button>
           </div>
-        </div>
-      )}
+        );
+      })()}
+
 
       {/* AI Styling Details Modal */}
       {isStylingModalOpen && (
