@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { Camera, X, RefreshCw, CheckCircle, Search, AlertCircle, Plus, Info, Droplets, ClipboardList, Activity, Star } from 'lucide-react';
 import BottomNav from '../components/BottomNav';
 import { useUser } from '../context/UserContext';
+import { sendScanResultEmail } from '../services/emailService';
 import './CameraAnalysis.css';
 
 // ─── SCORING ENGINE ───────────────────────────────────────────────────────────
@@ -249,6 +250,18 @@ export default function CameraAnalysis() {
       ]
     });
     setResults(prev => ({ ...prev, saved: true }));
+
+    // ── Auto-send scan result email ──────────────────────────────────────
+    if (userData.email) {
+      sendScanResultEmail({
+        name:           userData.name  || 'Friend',
+        email:          userData.email,
+        score:          results.score,
+        issue:          results.issue,
+        recommendation: results.recommendation,
+        skinType:       userData.skinType || 'Unknown',
+      }).catch(() => {}); // silent fail — never block the UI
+    }
   };
 
   const rating = results ? getScoreRating(results.score) : null;

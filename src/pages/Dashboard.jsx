@@ -4,6 +4,7 @@ import { Sun, CheckCircle, Bell, Droplet, Moon, Edit2, Star, Thermometer, MapPin
 import BottomNav from '../components/BottomNav';
 import { useUser } from '../context/UserContext';
 import { useLanguage } from '../context/LanguageContext';
+import { sendRoutineReminder, sendWeeklySkinTip } from '../services/emailService';
 import './Dashboard.css';
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
@@ -186,6 +187,53 @@ export default function Dashboard() {
       setScoreHistory(history);
     }
   }, [email, userData.score, today]);
+
+  // ── Auto email: routine reminders (8am morning, 9pm evening) ─────────────
+  useEffect(() => {
+    if (!userData.email) return; // only for logged-in users
+
+    const scheduleEmailReminder = (targetHour, targetMin, routineType) => {
+      const now  = new Date();
+      const fire = new Date(now);
+      fire.setHours(targetHour, targetMin, 0, 0);
+      if (fire <= now) fire.setDate(fire.getDate() + 1); // already passed → tomorrow
+      const msUntil = fire - now;
+
+      return setTimeout(() => {
+        sendRoutineReminder({
+          name:        userData.name  || 'Friend',
+          email:       userData.email,
+          routineType,
+        }).catch(() => {});
+      }, msUntil);
+    };
+
+    const t1 = scheduleEmailReminder(8,  0, 'Morning');
+    const t2 = scheduleEmailReminder(21, 0, 'Evening');
+    return () => { clearTimeout(t1); clearTimeout(t2); };
+  }, [userData.email, userData.name]);
+
+  // ── Auto email: weekly skin tip (once per 7 days) ─────────────────────────
+  useEffect(() => {
+    if (!userData.email || !userData.skinType || userData.skinType === 'Unknown') return;
+
+    const WEEKLY_KEY = `cuitsCare_weeklyTip_${userData.email}`;
+    const lastSent   = localStorage.getItem(WEEKLY_KEY);
+    const now        = Date.now();
+    const SEVEN_DAYS = 7 * 24 * 60 * 60 * 1000;
+
+    if (!lastSent || now - parseInt(lastSent, 10) > SEVEN_DAYS) {
+      const { tip } = getTimeTip(new Date().getHours()); // reuse time-based tip text
+      sendWeeklySkinTip({
+        name:     userData.name     || 'Friend',
+        email:    userData.email,
+        skinType: userData.skinType,
+        tip,
+      }).then(res => {
+        if (res?.success) localStorage.setItem(WEEKLY_KEY, now.toString());
+      }).catch(() => {});
+    }
+  }, [userData.email, userData.skinType, userData.name]);
 
   // ── Derived routine values (need these before the next useEffect) ─────────
   const hour = new Date().getHours();
